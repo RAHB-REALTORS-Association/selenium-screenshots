@@ -3,14 +3,11 @@ FROM python:3.11-slim-bullseye
 # Install dependencies for Chrome
 RUN apt-get update && \
     apt-get install -y wget unzip apt-utils && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+    wget https://dl.google.com/linux/direct/google-chrome-stable_117.0.5938.92-1_amd64.deb && \
+    dpkg -i google-chrome-stable_117.0.5938.92-1_amd64.deb; apt-get -fy install
 
 # Install Chromedriver
-RUN CHROME_VERSION=$(google-chrome --version | awk '{ print $3 }' | awk -F'.' '{ print $1 }') && \
-    wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION && \
-    CHROMEDRIVER_VERSION=$(cat LATEST_RELEASE_$CHROME_VERSION) && \
-    wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
+RUN wget https://chromedriver.storage.googleapis.com/117.0.5938.92/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/bin/chromedriver && \
     chmod +x /usr/bin/chromedriver
