@@ -3,8 +3,8 @@ FROM python:3.11-slim-bullseye
 # Install dependencies for Chrome
 RUN apt-get update && \
     apt-get install -y wget unzip apt-utils && \
-    wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/117.0.5938.92/linux64/chrome-linux64.zip && \
-    dpkg -i google-chrome-stable_117.0.5938.92-1_amd64.deb; apt-get -fy install
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
 # Install Chromedriver
 RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/117.0.5938.92/linux64/chromedriver-linux64.zip && \
