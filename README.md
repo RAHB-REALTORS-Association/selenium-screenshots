@@ -21,6 +21,7 @@ This project provides a simple API service that uses Selenium and Chrome Headles
 - Python
 - Flask
 - Flask-RESTful
+- Werkzeug
 - Gunicorn
 - Selenium
 - Chrome Headless

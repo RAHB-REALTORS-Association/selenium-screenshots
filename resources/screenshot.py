@@ -5,6 +5,8 @@ from selenium.webdriver.chrome.options import Options
 import tempfile
 import logging
 import time  # Importing the time module
+import os
+from werkzeug.utils import secure_filename
 from utilities import authenticate, validate_url
 
 logging.basicConfig(level=logging.INFO)
@@ -43,11 +45,22 @@ class ScreenshotAPI(Resource):
         
         driver = webdriver.Chrome(options=chrome_options)
 
+        # Create a secure temporary directory to store the screenshot
+        tmp_dir = tempfile.mkdtemp()
+
         try:
             driver.get(url)
-            time.sleep(delay)  # Adding a delay here
-            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=f".{format}")
-            driver.save_screenshot(temp_file.name)
+            time.sleep(delay)
+            
+            sanitized_name = secure_filename(f"screenshot.{format}")
+            fullpath = os.path.normpath(os.path.join(tmp_dir, sanitized_name))
+
+            if not fullpath.startswith(tmp_dir):  # This should always be true
+                raise Exception("Operation not allowed")
+
+            temp_file = tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False, suffix=sanitized_name)
+            temp_file_name = temp_file.name
+            driver.save_screenshot(temp_file_name)
         except Exception as e:
             logging.error(f"An error occurred: {str(e)}")
             abort(500, "An error occurred while taking the screenshot")
@@ -56,8 +69,8 @@ class ScreenshotAPI(Resource):
 
         # Serve the screenshot file
         try:
-            response = send_file(temp_file.name, mimetype=f'image/{format}', as_attachment=True)
-            response.headers["Content-Disposition"] = f"attachment; filename=screenshot.{format}"
+            response = send_file(temp_file_name, mimetype=f'image/{format}', as_attachment=True)
+            response.headers["Content-Disposition"] = f"attachment; filename={sanitized_name}"
             return response
         except Exception as e:
             logging.error(f"An error occurred while sending the file: {str(e)}")
