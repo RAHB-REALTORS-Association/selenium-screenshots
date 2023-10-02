@@ -31,6 +31,8 @@ Install the required Python packages with pip:
 pip install -r requirements.txt
 ```
 
+>Note: You also need Google Chrome and ChromeDriver installed for headless operation on servers.
+
 ## 🛠️ Configuration
 You can configure the API through environment variables such as setting the Flask secret key and the bearer token for authentication. The required environment variables are:
 
@@ -40,7 +42,14 @@ You can configure the API through environment variables such as setting the Flas
 To start the Flask development server:
 
 ```bash
+export BEARER_TOKEN=your_api_authentication_token
 python app.py
+```
+
+To run in production:
+```bash
+export BEARER_TOKEN=your_api_authentication_token
+python -m gunicorn --config ./gunicorn_config.py app:app
 ```
 
 ### API Endpoint
@@ -55,7 +64,7 @@ Make a GET request to `/screenshot` endpoint with the following parameters:
 Request to capture a screenshot:
 
 ```http
-GET /screenshot?url=https://example.com&viewport=1024x768&format=jpg&delay=5
+GET https://example.com/screenshot?url=https://example.com&viewport=1024x768&format=jpg&delay=5
 ```
 
 ## 🐳 Running with Docker
@@ -63,7 +72,7 @@ To build and run the application using Docker:
 
 ```bash
 docker build -t selenium-screenshots .
-docker run -p 8080:8080 selenium-screenshots
+docker run -e BEARER_TOKEN=<your_api_authentication_token> -p 8080:8080 selenium-screenshots
 ```
 
 ## 🌐 Community
