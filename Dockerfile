@@ -8,16 +8,9 @@ RUN apt-get update && \
 
 # Install Chromedriver
 # Download Chromedriver
-RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/117.0.5938.92/linux64/chromedriver-linux64.zip
-
-# Check if the file exists
-RUN ls -l 
-
-# Unzip Chromedriver
-RUN unzip chromedriver_linux64.zip 
-
-# Move and Set Permission for Chromedriver
-RUN mv chromedriver /usr/bin/chromedriver && chmod +x /usr/bin/chromedriver 
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/117.0.5938.92/linux64/chromedriver-linux64.zip \
+    unzip chromedriver_linux64.zip \
+    mv chromedriver /usr/bin/chromedriver && chmod +x /usr/bin/chromedriver
 
 # Set the working directory
 WORKDIR /app
