@@ -1,0 +1,4 @@
+Flask==3.0.0
+flask-restful==0.3.10
+gunicorn==21.2.0
+selenium==4.13.0

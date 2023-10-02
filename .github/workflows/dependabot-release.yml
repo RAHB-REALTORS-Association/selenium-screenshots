@@ -1,0 +1,33 @@
+name: Dependabot Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+    paths:
+      - 'requirements.txt'
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Bump version and push tag
+      id: create_tag
+      uses: anothrNick/github-tag-action@1.67.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        DEFAULT_BUMP: patch # Increments the patch version
+
+    - name: Create Release
+      id: create_release
+      uses: ncipollo/release-action@v1
+      with:
+        body: "Changes in this Release\n${{ github.event.pull_request.body }}"
+        tag: ${{ steps.create_tag.outputs.new_tag }}
+        token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,11 @@
+spec:
+  name: selenium-screenshots
+  services:
+  - name: screenshot-service
+    git:
+      branch: master
+      repo_clone_url: https://github.com/RAHB-REALTORS-Association/selenium-screenshots.git
+    envs:
+    - key: BEARER_TOKEN
+      value: "somesupersecretkey"
+      type: SECRET
