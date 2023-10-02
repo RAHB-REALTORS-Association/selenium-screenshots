@@ -1,16 +1,16 @@
-FROM python:3.9-slim
+FROM python:3.11-slim-bullseye
 
 # Install dependencies for Chrome
 RUN apt-get update && \
-    apt-get install -y wget unzip apt-utils && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+    apt-get install -y wget unzip apt-utils jq && \
+    CHROME_URL=$(curl -s https://availability.chromium.org/api/availability?format=json | jq -r '.items | .[] | select(.Channel == "stable") | .Url') && \
+    wget $CHROME_URL && \
+    dpkg -i google-chrome-stable_*.deb || apt-get -fy install
 
 # Install Chromedriver
 RUN CHROME_VERSION=$(google-chrome --version | awk '{ print $3 }' | awk -F'.' '{ print $1 }') && \
-    wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION && \
-    CHROMEDRIVER_VERSION=$(cat LATEST_RELEASE_$CHROME_VERSION) && \
-    wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
+    CHROMEDRIVER_URL=$(curl -s "https://availability.chromium.org/api/availability?format=json" | jq -r --arg CHROME_VERSION "$CHROME_VERSION" '.items | .[] | select(.Channel == "stable" and .Major == $CHROME_VERSION) | .Url') && \
+    wget $CHROMEDRIVER_URL/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/bin/chromedriver && \
     chmod +x /usr/bin/chromedriver
