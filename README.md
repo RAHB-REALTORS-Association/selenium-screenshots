@@ -49,12 +49,13 @@ Make a GET request to `/screenshot` endpoint with the following parameters:
 - `url` (required): The URL of the website to screenshot.
 - `viewport` (optional, default '800x600'): The viewport size.
 - `format` (optional, default 'png'): The screenshot format, supports png, jpg, jpeg.
+- `delay` (optiona, default '0'): The delay before the screenshot is taken to allow the page to load.
 
 ### Examples
 Request to capture a screenshot:
 
 ```http
-GET /screenshot?url=https://example.com&viewport=1024x768&format=jpg
+GET /screenshot?url=https://example.com&viewport=1024x768&format=jpg&delay=5
 ```
 
 ## 🐳 Running with Docker
