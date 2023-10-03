@@ -74,7 +74,17 @@ $(document).ready(function() {
                 $("#resultContainer img").fadeIn();
             },
             error: function(error) {
-                $("#resultContainer").html('<span style="color: red;">Error taking screenshot.</span>');
+                $("#resultContainer").html(`
+                    <div class="alert alert-warning mb-3 mt-15" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle me-2 pb-2"></i>
+                            <h4>Error Taking Screenshot</h4>
+                        </div>
+                        <p>
+                            There was an issue capturing the screenshot. Please check the provided details and try again.
+                        </p>
+                    </div>
+                `);
             },
             complete: function() {
                 $("#screenshotSpinner").hide();  // Hide the spinner
