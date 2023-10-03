@@ -2,7 +2,7 @@
 # For details on our config file, check out our docs at https://docs.sweep.dev/usage/config
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
-branch: 'main'
+branch: 'master'
 
 # By default Sweep will read the logs and outputs from your existing Github Actions. To disable this, set this to false.
 gha_enabled: True
