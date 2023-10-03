@@ -80,8 +80,14 @@
     <form class="mt-4" id="userForm">
         <div class="mb-3">
             <div class="mt-3 d-flex align-items-center justify-content-between">
-                <button class="btn btn-primary btn-lg" id="submitButton" type="submit">Screenshot</button>
-                <button class="btn btn-primary btn-lg ms-3" type="button">Save</button>
+                <button class="btn btn-primary btn-lg" id="submitButton" type="submit">
+                    <span class="spinner-border spinner-border-sm" id="screenshotSpinner" role="status" aria-hidden="true" style="display: none;"></span>
+                    Screenshot
+                </button>
+                <button class="btn btn-primary btn-lg ms-3" id="saveButton" type="button">
+                    <span class="spinner-border spinner-border-sm" id="saveSpinner" role="status" aria-hidden="true" style="display: none;"></span>
+                    Save
+                </button>                
             </div>
             <div id="resultContainer"></div>
         </div>

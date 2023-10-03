@@ -29,7 +29,7 @@ $(document).ready(function() {
         const delay = $("#delay").val();
 
         // Construct the request URL and headers
-        const requestUrl = `${apiUrl}?url=${websiteUrl}&viewport=${viewport}&format=${format}&delay=${delay}`;
+        const requestUrl = `${apiUrl}/screenshot?url=${websiteUrl}&viewport=${viewport}&format=${format}&delay=${delay}`;
         const headers = {
             "Authorization": `Bearer ${apiKey}`
         };
