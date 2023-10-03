@@ -70,7 +70,7 @@ $(document).ready(function() {
             },
             success: function(blob) {
                 const imageUrl = URL.createObjectURL(blob);
-                $("#resultContainer").html('<img src="' + imageUrl + '" style="display: none;" />');
+                $("#resultContainer").html('<a href="' + imageUrl + '" target="_blank" rel="noopener noreferrer"><img src="' + imageUrl + '" style="display: none;" /></a>');
                 $("#resultContainer img").fadeIn();
             },
             error: function(error) {
