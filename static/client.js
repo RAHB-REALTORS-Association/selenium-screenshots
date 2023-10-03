@@ -1,5 +1,17 @@
 $(document).ready(function() {
     
+    // Load the API settings from local storage if they exist
+    const storedApiUrl = localStorage.getItem("apiUrl");
+    const storedApiKey = localStorage.getItem("apiKey");
+
+    if (storedApiUrl) {
+        $("#apiUrl").val(storedApiUrl);
+    }
+
+    if (storedApiKey) {
+        $("#apiKey").val(storedApiKey);
+    }
+
     // Function to trigger the download of the image
     $("#saveButton").click(function(e) {
         e.preventDefault();
