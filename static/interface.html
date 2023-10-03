@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Selenium Screenshots</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+    <style>
+        #responseContainer {
+            overflow-y: auto;
+        }
+
+        #responseContainer pre {
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -pre-wrap;
+            white-space: -o-pre-wrap;
+            word-wrap: break-word;
+        }
+
+        #responseTabContent {
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/"><span aria-hidden="true" class="fas fa-camera"></span><span aria-hidden="true" class="fas fa-globe"></span></a>
+        <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- left-justified menu items go here -->
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"></li>
+                <li class="nav-item"></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="container bg-light p-5 my-3 rounded text-center">
+        <h1>📸 Selenium Screenshots API 🌐</h1>
+        <p class="lead">This project provides a simple API service that uses Selenium and Chrome Headless to take screenshots of websites.</p>
+    </div>
+    <input class="form-control mb-3" id="apiUrl" placeholder="API URL" type="text"/>
+    <input class="form-control mb-3" id="apiKey" placeholder="API Key" type="text"/>
+    <input class="form-control mb-3" id="websiteUrl" placeholder="Website URL to screenshot" type="text"/>
+    <input class="form-control mb-3" id="viewport" placeholder="Viewport size (e.g. 800x600)" type="text"/>
+    <select class="form-control mb-3" id="format">
+        <option>png</option>
+        <option>jpg</option>
+        <option>jpeg</option>
+    </select>
+    <input class="form-control mb-3" id="delay" placeholder="Delay (e.g. 0)" type="text"/>
+    <label><input class="form-check-input me-2" id="saveSettingsCheckbox" type="checkbox"/>Save API settings to local storage</label>
+    <form class="mt-4" id="userForm">
+        <div class="mb-3">
+            <div class="mt-3 d-flex align-items-center justify-content-between">
+                <button class="btn btn-primary btn-lg" id="submitButton" type="submit">Screenshot</button>
+                <button class="btn btn-primary btn-lg ms-3" type="button">Save</button>
+            </div>
+            <div id="resultContainer"></div>
+        </div>
+    </form>
+</div>
+<script src="client.js"></script>
+</body>
+</html>
