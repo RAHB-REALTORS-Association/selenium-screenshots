@@ -75,9 +75,9 @@ $(document).ready(function() {
             },
             error: function(error) {
                 $("#resultContainer").html(`
-                    <div class="alert alert-warning mb-3 mt-15" role="alert">
+                    <div class="alert alert-danger mb-3 mt-15" role="alert">
                         <div class="d-flex align-items-center">
-                            <i class="fas fa-exclamation-circle me-2 pb-2"></i>
+                            <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
                             <h4>Error Taking Screenshot</h4>
                         </div>
                         <p>
