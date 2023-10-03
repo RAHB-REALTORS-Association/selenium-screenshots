@@ -9,7 +9,7 @@ app = Flask(__name__)
 # Load the allowed origins from an environment variable and split by comma
 # For example, your environment variable might look like:
 # ALLOWED_ORIGINS=https://yourfrontenddomain1.com,https://yourfrontenddomain2.com
-ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '').split(',')
+ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', 'https://rahb-realtors-association.github.io').split(',')
 
 # Apply CORS to your app with the list of allowed origins
 CORS(app, origins=ALLOWED_ORIGINS)
