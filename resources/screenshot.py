@@ -40,6 +40,7 @@ class ScreenshotAPI(Resource):
         # Setup Selenium with headless Chrome
         chrome_options = Options()
         chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--hide-scrollbars")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument(f"--window-size={width},{height}")
