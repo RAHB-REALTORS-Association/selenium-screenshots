@@ -41,7 +41,21 @@ $(document).ready(function() {
         const delay = $("#delay").val();
 
         // Construct the request URL and headers
-        const requestUrl = `${apiUrl}/screenshot?url=${websiteUrl}&viewport=${viewport}&format=${format}&delay=${delay}`;
+       // Base request URL
+        let requestUrl = `${apiUrl}/screenshot?url=${websiteUrl}`;
+
+        // Conditionally append parameters if they have values
+        if (viewport) {
+            requestUrl += `&viewport=${viewport}`;
+        }
+        if (format) {
+            requestUrl += `&format=${format}`;
+        }
+        if (delay) {
+            requestUrl += `&delay=${delay}`;
+        }
+
+        // Construct the headers
         const headers = {
             "Authorization": `Bearer ${apiKey}`
         };
