@@ -1,9 +1,11 @@
-.git*
+docs/
+.git/
+.github/
+.dockerignore
+.gitignore
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
-Procfile
+Dockerfile
 README.md
 SECURITY.md
-app.json
-runtime.txt
 sweep.yaml
