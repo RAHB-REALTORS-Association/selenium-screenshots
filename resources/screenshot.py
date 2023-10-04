@@ -37,6 +37,9 @@ class ScreenshotAPI(Resource):
         if delay < 0 or delay > MAX_DELAY:
             abort(400, f"Invalid delay. Delay must be between 0 and {MAX_DELAY}")
 
+        # Dark mode option (default: false)
+        darkmode = request.args.get('darkmode', 'false').lower() == 'true'
+
         # Setup Selenium with headless Chrome
         chrome_options = Options()
         chrome_options.add_argument("--headless")
@@ -44,6 +47,10 @@ class ScreenshotAPI(Resource):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument(f"--window-size={width},{height}")
+
+        # Add dark mode flag if requested
+        if darkmode:
+            chrome_options.add_argument("--force-dark-mode")
 
         driver = webdriver.Chrome(options=chrome_options)
         driver.set_page_load_timeout(30)  # set a 30-second timeout for page load
