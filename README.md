@@ -18,13 +18,17 @@ This project provides a simple API service that uses Selenium and Chrome Headles
 
 ## ✅ Requirements
 
-- Python
+Python:
 - Flask
 - Flask_CORS
 - Flask-RESTful
-- Werkzeug
 - Gunicorn
 - Selenium
+- URLlib3
+- Werkzeug
+
+Other:
+- Google Chrome
 - ChromeDriver
 
 Install the required Python packages with pip:
@@ -66,7 +70,15 @@ Make a GET request to `/screenshot` endpoint with the following parameters:
 Request to capture a screenshot:
 
 ```http
-GET https://example.com/screenshot?url=https://example.com&viewport=1024x768&format=jpg&delay=5
+GET https://example.com/screenshot?url=https://example.com&viewport=1024x768&format=jpg&delay=1
+```
+
+With cURL on command line:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_AUTHENTICATION_TOKEN" \ 
+"https://example.com/screenshot?url=https%3A%2F%2Fexample.com&viewport=1024x768&format=jpg&delay=1" \
+--output screenshot.jpg
 ```
 
 ## 🐳 Running with Docker
