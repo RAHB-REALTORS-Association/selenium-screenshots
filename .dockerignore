@@ -1,9 +1,9 @@
-.git*
+docs/
+.git/
+.github/
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
-Procfile
+Dockerfile
 README.md
 SECURITY.md
-app.json
-runtime.txt
 sweep.yaml

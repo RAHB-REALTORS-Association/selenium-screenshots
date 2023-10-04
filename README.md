@@ -20,11 +20,12 @@ This project provides a simple API service that uses Selenium and Chrome Headles
 
 - Python
 - Flask
+- Flask_CORS
 - Flask-RESTful
 - Werkzeug
 - Gunicorn
 - Selenium
-- Chrome Headless
+- ChromeDriver
 
 Install the required Python packages with pip:
 
@@ -53,10 +54,6 @@ export BEARER_TOKEN=your_api_authentication_token
 python -m gunicorn --config ./gunicorn_config.py app:app
 ```
 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/RAHB-REALTORS-Association/selenium-screenshots/tree/master)
-
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/RAHB-REALTORS-Association/selenium-screenshots/tree/master)
-
 ### API Endpoint
 Make a GET request to `/screenshot` endpoint with the following parameters:
 
@@ -77,7 +74,7 @@ To build and run the application using Docker:
 
 ```bash
 docker build -t selenium-screenshots .
-docker run -e BEARER_TOKEN=<your_api_authentication_token> -p 8080:8080 selenium-screenshots
+docker run -e BEARER_TOKEN=your_api_authentication_token -p 8080:8080 selenium-screenshots
 ```
 
 ## 🌐 Community
