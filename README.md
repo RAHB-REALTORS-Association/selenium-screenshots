@@ -4,7 +4,7 @@
 
 # 📸 Selenium Screenshots API 🌐
 
-This project provides a simple API service that uses Selenium and Chrome Headless to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.
+This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.
 
 ## Table of Contents
 - [✅ Requirements](#-requirements)
@@ -29,7 +29,7 @@ Python:
 
 Other:
 - Google Chrome
-- ChromeDriver
+- ChromeDriver (required for headless operation)
 
 Install the required Python packages with pip:
 
@@ -37,7 +37,7 @@ Install the required Python packages with pip:
 pip install -r requirements.txt
 ```
 
->Note: You also need Google Chrome and ChromeDriver installed for headless operation on servers.
+>Note: You will also need ChromeDriver installed for headless operation on servers.
 
 ## 🛠️ Configuration
 You can configure the API through environment variables such as setting the Flask secret key and the bearer token for authentication. The required environment variables are:
