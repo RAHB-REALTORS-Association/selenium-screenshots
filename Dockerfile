@@ -2,9 +2,15 @@ FROM python:3.11-slim-bullseye
 
 # Install dependencies for Chrome
 RUN apt-get update && \
-    apt-get install -y wget unzip apt-utils fontconfig && \
+    apt-get install -y wget unzip apt-utils fontconfig xfonts-utils && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+
+# Install Microsoft Core Fonts
+RUN echo "deb http://deb.debian.org/debian contrib" >> /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y ttf-mscorefonts-installer && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Chromedriver
 RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/117.0.5938.92/linux64/chromedriver-linux64.zip && \
