@@ -7,7 +7,7 @@ RUN apt-get update && \
     dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
 # Install Microsoft Core Fonts
-RUN echo "deb http://deb.debian.org/debian contrib" >> /etc/apt/sources.list && \
+RUN echo "deb http://deb.debian.org/debian bullseye contrib" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y ttf-mscorefonts-installer && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
