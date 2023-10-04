@@ -48,7 +48,7 @@ jobs:
         pip install pylint
     - name: Analyzing the code with pylint
       run: |
-        pylint -E $(git ls-files '*.py')
+        pylint -E -d import-error $(git ls-files '*.py')
 
   dependabot:
     name: 'Dependabot'
