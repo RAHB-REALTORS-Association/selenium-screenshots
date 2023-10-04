@@ -43,18 +43,20 @@ pip install -r requirements.txt
 You can configure the API through environment variables such as setting the Flask secret key and the bearer token for authentication. The required environment variables are:
 
 - `BEARER_TOKEN`: The token for bearer authentication.
+- `ALLOWED_ORIGINS`: A comma-separated list of domains that are allowed to make cross-origin requests (CORS) to the API.
 
 ## 🧑‍💻 Usage
 To start the Flask development server:
 
 ```bash
-export BEARER_TOKEN=your_api_authentication_token
+export ALLOWED_ORIGINS=*
 python app.py
 ```
 
 To run in production:
 ```bash
 export BEARER_TOKEN=your_api_authentication_token
+export ALLOWED_ORIGINS=https://example.com
 python -m gunicorn --config ./gunicorn_config.py app:app
 ```
 
@@ -87,7 +89,17 @@ To build and run the application using Docker:
 
 ```bash
 docker build -t selenium-screenshots .
-docker run -e BEARER_TOKEN=your_api_authentication_token -p 8080:8080 selenium-screenshots
+docker run -d -p 8080:8080 \
+-e BEARER_TOKEN=your_api_authentication_token -e ALLOWED_ORIGINS=https://example.com \
+--name screenshot-service selenium-screenshots
+```
+
+Or pull the pre-built Docker image from GHCR.io:
+```bash
+docker pull ghcr.io/rahb-realtors-association/selenium-screenshots:latest
+docker run -d -p 8080:8080 \
+-e BEARER_TOKEN=your_api_authentication_token -e ALLOWED_ORIGINS=https://example.com \
+--name screenshot-service ghcr.io/rahb-realtors-association/selenium-screenshots:latest
 ```
 
 ## 🌐 Community
