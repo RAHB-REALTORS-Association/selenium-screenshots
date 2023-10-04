@@ -51,6 +51,7 @@ class ScreenshotAPI(Resource):
         # Add dark mode flag if requested
         if darkmode:
             chrome_options.add_argument("--force-dark-mode")
+            chrome_options.add_argument("--enable-features=WebUIDarkMode")
 
         driver = webdriver.Chrome(options=chrome_options)
         driver.set_page_load_timeout(30)  # set a 30-second timeout for page load
