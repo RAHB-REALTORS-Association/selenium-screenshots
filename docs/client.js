@@ -1,18 +1,17 @@
 $(document).ready(function() {
-    
-    // Add event listener for the show event of the collapsible content
+
+    // Event listeners for the collapsible div
     $('#settingsContent').on('show.bs.collapse', function() {
         $("#toggleIcon").removeClass('fa-chevron-down').addClass('fa-chevron-up');
     });
 
-    // Add event listener for the hide event of the collapsible content
     $('#settingsContent').on('hide.bs.collapse', function() {
         $("#toggleIcon").removeClass('fa-chevron-up').addClass('fa-chevron-down');
     });
 
-    // Load the API settings from local storage if they exist
-    const storedApiUrl = localStorage.getItem("apiUrl");
-    const storedApiKey = localStorage.getItem("apiKey");
+    // Load the API settings from either local storage or session storage
+    const storedApiUrl = localStorage.getItem("apiUrl") || sessionStorage.getItem("apiUrl");
+    const storedApiKey = localStorage.getItem("apiKey") || sessionStorage.getItem("apiKey");
 
     if (storedApiUrl) {
         $("#apiUrl").val(storedApiUrl);
@@ -22,6 +21,14 @@ $(document).ready(function() {
         $("#apiKey").val(storedApiKey);
     }
 
+    // Check if settings are absent in both local and session storage
+    if (!storedApiUrl || !storedApiKey) {
+        $('#apiSettingsModal').modal('show');
+    }
+
+    // Initially disable the saveButton
+    $("#saveButton").prop("disabled", true);
+
     // Function to trigger the download of the image
     $("#saveButton").click(function(e) {
         e.preventDefault();
@@ -30,7 +37,7 @@ $(document).ready(function() {
         let imageUrl = $("#resultContainer img").attr('src');
         let link = document.createElement('a');
         link.href = imageUrl;
-        link.download = 'screenshot.png';  // You can customize the filename here
+        link.download = 'screenshot.png';
         link.click();
         
         $("#saveSpinner").hide();  // Hide the spinner
@@ -39,6 +46,10 @@ $(document).ready(function() {
     // Function to handle the screenshot request
     $("#submitButton").click(function(e) {
         e.preventDefault();
+
+        // Disable the saveButton until the new screenshot is loaded
+        $("#saveButton").prop("disabled", true);
+
         $("#screenshotSpinner").show();  // Show the spinner
         $("#submitButton").prop("disabled", true);
         
@@ -50,8 +61,7 @@ $(document).ready(function() {
         const format = $("#format").val();
         const delay = $("#delay").val();
 
-        // Construct the request URL and headers
-       // Base request URL
+        // Base request URL
         let requestUrl = `${apiUrl}/screenshot?url=${websiteUrl}`;
 
         // Conditionally append parameters if they have values
@@ -70,7 +80,7 @@ $(document).ready(function() {
             "Authorization": `Bearer ${apiKey}`
         };
 
-        // Make the AJAX GET request to the screenshot API
+        // AJAX call to the screenshot API
         $.ajax({
             url: requestUrl,
             type: "GET",
@@ -82,16 +92,26 @@ $(document).ready(function() {
                 const imageUrl = URL.createObjectURL(blob);
                 $("#resultContainer").html('<a href="' + imageUrl + '" target="_blank" rel="noopener noreferrer"><img src="' + imageUrl + '" style="display: none;" /></a>');
                 $("#resultContainer img").fadeIn();
+
+                // Enable the saveButton as the screenshot has loaded
+                $("#saveButton").prop("disabled", false);
             },
             error: function(error) {
-                $("#resultContainer").html(`
+                let errorMessage = 'There was an issue capturing the screenshot.';
+                
+                // Check if the error response has a message and use it
+                if (error && error.responseJSON && error.responseJSON.message) {
+                    errorMessage = error.responseJSON.message;
+                }
+                
+                $("#errorContainer").html(`
                     <div class="alert alert-danger mb-3 mt-15" role="alert">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
-                            <h4>Error Taking Screenshot</h4>
+                            <h4>Error</h4>
                         </div>
                         <p>
-                            There was an issue capturing the screenshot. Please check the provided details and try again.
+                            ${errorMessage}
                         </p>
                     </div>
                 `);
@@ -101,11 +121,20 @@ $(document).ready(function() {
                 $("#submitButton").prop("disabled", false);
             }
         });
+    });
 
-        // Save the API settings to local storage if checkbox is checked
+    // Function to handle the settings save
+    $("#apiSettingsModal .btn-primary").click(function(e) {
+        const apiUrl = $("#apiUrl").val();
+        const apiKey = $("#apiKey").val();
+
+        // Save the API settings to local storage or session storage
         if ($("#saveSettingsCheckbox").is(":checked")) {
             localStorage.setItem("apiUrl", apiUrl);
             localStorage.setItem("apiKey", apiKey);
+        } else {
+            sessionStorage.setItem("apiUrl", apiUrl);
+            sessionStorage.setItem("apiKey", apiKey);
         }
     });
 });

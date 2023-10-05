@@ -15,7 +15,9 @@
             width: 100%;
             height: auto;
         }
-
+        #settingsContent {
+            margin-top: -20px;
+        }
         .mt-15 {
             margin-top: 15px !important;
         }     
@@ -50,6 +52,7 @@
     </div>
 </nav>
 <div class="container">
+    <div id="errorContainer"></div>
     <div class="container bg-light p-5 my-3 rounded text-center">
         <h1>📸🌐</h1>
         <p class="lead">This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites.</p>
@@ -74,7 +77,7 @@
             </div>
         </div>
     </div>
-    <div class="alert alert-secondary mt-4 p-3 text-center" style="cursor: pointer; border: 1px solid #ccc;" data-bs-toggle="collapse" data-bs-target="#settingsContent" aria-expanded="false" aria-controls="settingsContent">
+    <div class="alert alert-secondary mt-4 p-3 text-center" style="cursor: pointer; border: 1px solid #ccc; z-index:10;" data-bs-toggle="collapse" data-bs-target="#settingsContent" aria-expanded="false" aria-controls="settingsContent">
         <span aria-hidden="true" class="fas fa-cog"></span><span style="text-transform:uppercase"> Settings</span>
         <i class="fas fa-chevron-down float-end mt-1" id="toggleIcon"></i>
     </div>
@@ -98,12 +101,12 @@
         <div class="mb-3">
             <div class="mt-3 d-flex align-items-center justify-content-between">
                 <button class="btn btn-primary btn-lg" id="submitButton" type="submit">
-                    <span class="spinner-border spinner-border-sm" id="screenshotSpinner" role="status" aria-hidden="true" style="display: none;"></span>
-                    Screenshot <i class="fas fa-camera" id="screenshotIcon"></i>
+                    <i class="fas fa-camera" id="screenshotIcon"></i>
+                    Screenshot <span class="spinner-border spinner-border-sm" id="screenshotSpinner" role="status" aria-hidden="true" style="display: none;"></span>
                 </button>
                 <button class="btn btn-primary btn-lg ms-3" id="saveButton" type="button">
-                    <span class="spinner-border spinner-border-sm" id="saveSpinner" role="status" aria-hidden="true" style="display: none;"></span>
-                    Download <i class="fas fa-download" id="saveIcon"></i>
+                    <i class="fas fa-download" id="saveIcon"></i> 
+                    Download
                 </button>                
             </div>
             <div id="resultContainer"></div>
