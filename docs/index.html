@@ -32,7 +32,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!-- left-justified menu items go here -->>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#apiSettingsModal">
+                        <span aria-hidden="true" class="fas fa-plug"></span> API Settings
+                    </a>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
@@ -50,23 +54,46 @@
         <h1>📸🌐</h1>
         <p class="lead">This project provides a simple interface to an API service that uses Selenium and Chrome Headless to take screenshots of websites.</p>
     </div>
-    <div class="mt-3 d-flex align-items-center justify-content-between">
-        <input class="form-control mt-15 me-2 mb-2 ms-2" id="apiUrl" placeholder="API URL" type="text"/>
-        <input class="form-control mt-15 me-2 mb-2 ms-2" id="apiKey" placeholder="API Key" type="password"/>
+    <div class="modal fade" id="apiSettingsModal" tabindex="-1" aria-labelledby="apiSettingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="apiSettingsModalLabel"><i class="fas fa-plug"></i> API Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control mb-3" id="apiUrl" placeholder="API URL" type="text"/>
+                    <input class="form-control mb-3" id="apiKey" placeholder="API Key" type="password"/>
+                    <label class="mt-15 me-2 mb-2 ms-2"><input class="form-check-input me-2" id="saveSettingsCheckbox" type="checkbox"/>Save API settings to local storage</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        Save <i class="fas fa-save" id="saveIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <label class="mt-15 me-2 mb-2 ms-2"><input class="form-check-input me-2" id="saveSettingsCheckbox" type="checkbox"/>Save API settings to local storage</label>
-    <div class="mt-3 d-flex align-items-center justify-content-between">
-        <input class="form-control mt-15 me-2 mb-2 ms-2" id="websiteUrl" placeholder="Website URL to screenshot" type="text"/>
+    <div class="alert alert-secondary mt-15 p-3 text-center" style="cursor: pointer; border: 1px solid #ccc;" data-bs-toggle="collapse" data-bs-target="#settingsContent" aria-expanded="false" aria-controls="settingsContent">
+        <strong>Settings</strong>
+        <i class="fas fa-chevron-down float-end mt-1" id="toggleIcon"></i>
     </div>
-    <div class="mt-3 d-flex align-items-center justify-content-between">
-        <input class="form-control mt-15 me-2 mb-2 ms-2" id="viewport" placeholder="Viewport size (e.g. 800x600)" type="text"/>
-        <input class="form-control mt-15 me-2 mb-2 ms-2" id="delay" placeholder="Delay (e.g. 0)" type="text"/>
-        <select class="form-control mt-15 me-2 mb-2 ms-2" id="format">
-            <option>png</option>
-            <option>jpg</option>
-            <option>jpeg</option>
-        </select>
+    <div class="collapse" id="settingsContent">
+        <div class="card card-body bg-light">
+            <div class="d-flex align-items-center justify-content-between">
+                <input class="form-control mt-15 me-2 mb-2 ms-2" id="viewport" placeholder="Viewport size (e.g. 800x600)" type="text"/>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+                <input class="form-control mt-15 me-2 mb-2 ms-2" id="delay" placeholder="Time delay (e.g. 0)" type="text"/>
+                <select class="form-control mt-15 me-2 mb-2 ms-2" id="format">
+                    <option>png</option>
+                    <option>jpg</option>
+                    <option>jpeg</option>
+                </select>
+            </div>
+        </div>
     </div>
+    <input class="form-control mt-15" id="websiteUrl" placeholder="Website URL to screenshot" type="text"/>
     <form class="mt-4" id="userForm">
         <div class="mb-3">
             <div class="mt-3 d-flex align-items-center justify-content-between">
@@ -76,7 +103,7 @@
                 </button>
                 <button class="btn btn-primary btn-lg ms-3" id="saveButton" type="button">
                     <span class="spinner-border spinner-border-sm" id="saveSpinner" role="status" aria-hidden="true" style="display: none;"></span>
-                    Save <i class="fas fa-save" id="saveIcon"></i>
+                    Download <i class="fas fa-download" id="saveIcon"></i>
                 </button>                
             </div>
             <div id="resultContainer"></div>
