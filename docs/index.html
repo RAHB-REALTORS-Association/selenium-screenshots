@@ -65,11 +65,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input class="form-control mb-3" id="apiUrl" placeholder="API URL" type="text"/>
+                    <p>Please enter your API URL and API Key below:</p>
+                    <input class="form-control mb-3" id="apiUrl" placeholder="https://example.com:8080" type="text"/>
                     <input class="form-control mb-3" id="apiKey" placeholder="API Key" type="password"/>
                     <label class="mt-15 me-2 mb-2 ms-2"><input class="form-check-input me-2" id="saveSettingsCheckbox" type="checkbox"/>Save API settings to local storage</label>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close <i class="fas fa-times" id="closeIcon"></i>
+                    </button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                         Save <i class="fas fa-save" id="saveIcon"></i>
                     </button>
@@ -105,8 +109,7 @@
                     Screenshot <span class="spinner-border spinner-border-sm" id="screenshotSpinner" role="status" aria-hidden="true" style="display: none;"></span>
                 </button>
                 <button class="btn btn-primary btn-lg ms-3" id="saveButton" type="button">
-                    <i class="fas fa-download" id="saveIcon"></i> 
-                    Download
+                    Download <i class="fas fa-download" id="saveIcon"></i>
                 </button>                
             </div>
             <div id="resultContainer"></div>
