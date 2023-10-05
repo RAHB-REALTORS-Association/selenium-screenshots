@@ -7,9 +7,10 @@ BEARER_TOKEN = os.environ.get('BEARER_TOKEN')
 def authenticate():
     auth_header = request.headers.get('Authorization')
     if not BEARER_TOKEN:  # If no BEARER_TOKEN is set in the environment, allow access (optional)
-        return
+        return None
     if not auth_header or auth_header != f"Bearer {BEARER_TOKEN}":
-        abort(401, "Unauthorized Access")
+        return abort(401, "Unauthorized Access")
+    return None
 
 def validate_url(url):
     try:
