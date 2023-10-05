@@ -32,12 +32,18 @@ $(document).ready(function() {
     // Function to trigger the download of the image
     $("#saveButton").click(function(e) {
         e.preventDefault();
-        
-        const format = $("#format").val() || "png";  // Default to "png" if no format specified
+
+        // Get the format and image URL
+        const format = $("#format").val() || "png";
         let imageUrl = $("#resultContainer img").attr('src');
         let link = document.createElement('a');
         link.href = imageUrl;
-        link.download = `screenshot.${format}`;
+
+        // Generate a timestamp in the format YYYYMMDD-HHMMSS
+        const now = new Date();
+        const timestamp = now.toISOString().slice(0, 10).replace(/-/g, '') + '-' + now.toISOString().slice(11, 19).replace(/:/g, '');
+
+        link.download = `screenshot-${timestamp}.${format}`;
         link.click();
     });    
 
