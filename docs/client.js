@@ -47,6 +47,9 @@ $(document).ready(function() {
     $("#submitButton").click(function(e) {
         e.preventDefault();
 
+        // Collapse the settings div if it's open
+        $('#settingsContent').collapse('hide');
+
         // Disable the saveButton until the new screenshot is loaded
         $("#saveButton").prop("disabled", true);
 
@@ -91,7 +94,14 @@ $(document).ready(function() {
             success: function(blob) {
                 const imageUrl = URL.createObjectURL(blob);
                 $("#resultContainer").html('<a href="' + imageUrl + '" target="_blank" rel="noopener noreferrer"><img src="' + imageUrl + '" style="display: none;" /></a>');
-                $("#resultContainer img").fadeIn();
+                
+                // Smoothly scroll to the result container and fade in the image
+                $('html, body').animate({
+                    scrollTop: $("#resultContainer").offset().top
+                }, 1000, function() {
+                    // Animation complete, now fade in the image
+                    $("#resultContainer img").fadeIn();
+                });
 
                 // Enable the saveButton as the screenshot has loaded
                 $("#saveButton").prop("disabled", false);
