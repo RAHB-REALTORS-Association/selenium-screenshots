@@ -1,5 +1,15 @@
 $(document).ready(function() {
     
+    // Add event listener for the show event of the collapsible content
+    $('#settingsContent').on('show.bs.collapse', function() {
+        $("#toggleIcon").removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    });
+
+    // Add event listener for the hide event of the collapsible content
+    $('#settingsContent').on('hide.bs.collapse', function() {
+        $("#toggleIcon").removeClass('fa-chevron-up').addClass('fa-chevron-down');
+    });
+
     // Load the API settings from local storage if they exist
     const storedApiUrl = localStorage.getItem("apiUrl");
     const storedApiKey = localStorage.getItem("apiKey");
