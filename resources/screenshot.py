@@ -13,8 +13,10 @@ logging.basicConfig(level=logging.INFO)
 
 class ScreenshotAPI(Resource):
     def get(self):
-        # Authenticate
-        authenticate()
+        # Call the authenticate function
+        response = authenticate()
+        if response:
+            return response
 
         # Input validation
         url = request.args.get('url')
