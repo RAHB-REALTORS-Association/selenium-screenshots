@@ -32,16 +32,14 @@ $(document).ready(function() {
     // Function to trigger the download of the image
     $("#saveButton").click(function(e) {
         e.preventDefault();
-        $("#saveSpinner").show();  // Show the spinner
         
+        const format = $("#format").val() || "png";  // Default to "png" if no format specified
         let imageUrl = $("#resultContainer img").attr('src');
         let link = document.createElement('a');
         link.href = imageUrl;
-        link.download = 'screenshot.png';
+        link.download = `screenshot.${format}`;
         link.click();
-        
-        $("#saveSpinner").hide();  // Hide the spinner
-    });
+    });    
 
     // Function to handle the screenshot request
     $("#submitButton").click(function(e) {
@@ -60,9 +58,9 @@ $(document).ready(function() {
         const apiUrl = $("#apiUrl").val();
         const apiKey = $("#apiKey").val();
         const websiteUrl = encodeURIComponent($("#websiteUrl").val());
-        const viewport = $("#viewport").val();
-        const format = $("#format").val();
-        const delay = $("#delay").val();
+        const viewport = $("#viewport").val() || "1280x960";
+        const format = $("#format").val() || "png";
+        const delay = $("#delay").val() || "1";
 
         // Base request URL
         let requestUrl = `${apiUrl}/screenshot?url=${websiteUrl}`;
@@ -93,14 +91,19 @@ $(document).ready(function() {
             },
             success: function(blob) {
                 const imageUrl = URL.createObjectURL(blob);
+
+                // Fade out the error message (if present) when the screenshot button is pressed
+                $("#errorContainer").fadeOut();
+
+                // Set the image URL as the source of the image tag
                 $("#resultContainer").html('<a href="' + imageUrl + '" target="_blank" rel="noopener noreferrer"><img src="' + imageUrl + '" style="display: none;" /></a>');
                 
-                // Smoothly scroll to the result container and fade in the image
-                $('html, body').animate({
-                    scrollTop: $("#resultContainer").offset().top
-                }, 1000, function() {
-                    // Animation complete, now fade in the image
-                    $("#resultContainer img").fadeIn();
+                // First, fade in the image
+                $("#resultContainer img").fadeIn(1000, function() {
+                    // After the image has faded in, smoothly scroll to its position
+                    $('html, body').animate({
+                        scrollTop: $("#actionBar").offset().top
+                    }, 1000);
                 });
 
                 // Enable the saveButton as the screenshot has loaded
