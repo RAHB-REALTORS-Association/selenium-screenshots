@@ -10,13 +10,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
     <style>
+        a.navbar-brand::after {
+            content: 'API';
+            font-size: 12px;vertical-align:top;
+        }
         #resultContainer img {
             padding-top: 25px;
             width: 100%;
             height: auto;
         }
         #settingsContent {
-            margin-top: -20px;
+            margin-top: -18px;
+        }
+        #settingsContent div.card {
+            border-radius: 0 0 3px 3px;
         }
         .mt-15 {
             margin-top: 15px !important;
