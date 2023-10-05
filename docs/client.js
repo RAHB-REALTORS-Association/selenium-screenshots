@@ -22,7 +22,7 @@ $(document).ready(function() {
     }
 
     // Check if settings are absent in both local and session storage
-    if (!storedApiUrl || !storedApiKey) {
+    if (!storedApiUrl) {
         $('#apiSettingsModal').modal('show');
     }
 
