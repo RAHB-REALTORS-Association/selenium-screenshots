@@ -7,18 +7,14 @@
 This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.
 
 ## Table of Contents
-- [📸 Selenium Screenshots API 🌐](#-selenium-screenshots-api-)
-  - [Table of Contents](#table-of-contents)
-  - [✅ Requirements](#-requirements)
-  - [🛠️ Configuration](#️-configuration)
-  - [🧑‍💻 Usage](#-usage)
-    - [API Endpoint](#api-endpoint)
-    - [Examples](#examples)
-  - [🐳 Running with Docker](#-running-with-docker)
-  - [🌐 Community](#-community)
-    - [Contributing 👥](#contributing-)
-    - [Reporting Bugs 🐛](#reporting-bugs-)
-  - [📄 License](#-license)
+- [✅ Requirements](#-requirements)
+- [🛠️ Configuration](#%EF%B8%8F-configuration)
+- [🧑‍💻 Usage](#-usage)
+- [🐳 Running with Docker](#-running-with-docker)
+- [🌐 Community](#-community)
+  - [Contributing 👥](#contributing-)
+  - [Reporting Bugs 🐛](#reporting-bugs-)
+- [📄 License](#-license)
 
 ## ✅ Requirements
 
