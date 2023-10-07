@@ -27,6 +27,9 @@
         #settingsContent div.card {
             border-radius: 0 0 3px 3px;
         }
+        #delaySliderGroup {
+            margin-right: 32px;
+        }
         .mt-15 {
             margin-top: 15px !important;
         }     
@@ -110,7 +113,7 @@
             
             <!-- Delay Slider and Format Buttons -->
             <div class="d-flex align-items-start justify-content-between mt-2">
-                <div class="flex-grow-1" style="margin-right:25px;">
+                <div class="flex-grow-1" id="delaySliderGroup">
                     <label for="delaySlider" class="form-label">Delay:</label> <span id="delayValue">1</span> second
                     <input type="range" class="form-range m-2" id="delaySlider" min="1" max="30" value="1">
                 </div>
@@ -140,6 +143,6 @@
         </div>
     </form>
 </div>
-<script src="client.js"></script>
+<script src="client.js?v=202310071723"></script>
 </body>
 </html>
