@@ -90,8 +90,7 @@ To build and run the application locally using Docker for testing:
 ```bash
 docker buildx build --platform linux/amd64 -t selenium-screenshots .
 docker run --platform linux/amd64 -p 5000:8080 \
--e BEARER_TOKEN="your_api_authentication_token" \
--e ALLOWED_ORIGINS="https://example.com" \
+-e ALLOWED_ORIGINS="*" \
 --name screenshot-service \
 selenium-screenshots
 ```
