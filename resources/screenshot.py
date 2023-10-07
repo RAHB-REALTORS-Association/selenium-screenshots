@@ -13,78 +13,80 @@ logging.basicConfig(level=logging.INFO)
 
 class ScreenshotAPI(Resource):
     def get(self):
-        # Call the authenticate function
-        response = authenticate()
-        if response:
-            return response
-
-        # Input validation
-        url = request.args.get('url')
-        if not url or not validate_url(url):
-            abort(400, "Invalid or missing URL")
-
-        viewport = request.args.get('viewport', '800x600')
         try:
-            width, height = map(int, viewport.split('x'))
-        except ValueError:
-            abort(400, "Invalid viewport format. It should be <width>x<height>")
+            # Call the authenticate function
+            response = authenticate()
+            if response:
+                return response
 
-        format = request.args.get('format', 'png')
-        if format not in ['png', 'jpg', 'jpeg']:
-            abort(400, "Invalid format. Supported formats are png, jpg, jpeg")
+            # Input validation
+            url = request.args.get('url')
+            if not url or not validate_url(url):
+                abort(400, "Invalid or missing URL")
 
-        # Adding a delay with a cap
-        delay = request.args.get('delay', default=0, type=int)
-        MAX_DELAY = 30  # Set to your desired max delay
-        if delay < 0 or delay > MAX_DELAY:
-            abort(400, f"Invalid delay. Delay must be between 0 and {MAX_DELAY}")
+            viewport = request.args.get('viewport', '800x600')
+            try:
+                width, height = map(int, viewport.split('x'))
+            except ValueError:
+                abort(400, "Invalid viewport format. It should be <width>x<height>")
 
-        # Dark mode option (default: false)
-        darkmode = request.args.get('darkmode', 'false').lower() == 'true'
+            format = request.args.get('format', 'png')
+            if format not in ['png', 'jpg', 'jpeg']:
+                abort(400, "Invalid format. Supported formats are png, jpg, jpeg")
 
-        # Setup Selenium with headless Chrome
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--hide-scrollbars")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument(f"--window-size={width},{height}")
+            # Adding a delay with a cap
+            delay = request.args.get('delay', default=0, type=int)
+            MAX_DELAY = 30  # Set to your desired max delay
+            if delay < 0 or delay > MAX_DELAY:
+                abort(400, f"Invalid delay. Delay must be between 0 and {MAX_DELAY}")
 
-        # Add dark mode flag if requested
-        if darkmode:
-            chrome_options.add_argument("--force-dark-mode")
-            chrome_options.add_argument("--enable-features=WebUIDarkMode")
+            # Dark mode option (default: false)
+            darkmode = request.args.get('darkmode', 'false').lower() == 'true'
 
-        driver = webdriver.Chrome(options=chrome_options)
-        driver.set_page_load_timeout(30)  # set a 30-second timeout for page load
+            # Setup Selenium with headless Chrome
+            chrome_options = Options()
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--hide-scrollbars")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument(f"--window-size={width},{height}")
 
-        # Create a secure temporary directory to store the screenshot
-        tmp_dir = tempfile.mkdtemp()
+            # Add dark mode flag if requested
+            if darkmode:
+                chrome_options.add_argument("--force-dark-mode")
+                chrome_options.add_argument("--enable-features=WebUIDarkMode")
 
-        try:
-            driver.get(url)
-            time.sleep(delay)
+            driver = webdriver.Chrome(options=chrome_options)
+            driver.set_page_load_timeout(30)  # set a 30-second timeout for page load
 
-            sanitized_name = secure_filename(f"screenshot.{format}")
-            fullpath = os.path.normpath(os.path.join(tmp_dir, sanitized_name))
+            # Create a secure temporary directory to store the screenshot
+            tmp_dir = tempfile.mkdtemp()
 
-            if not fullpath.startswith(tmp_dir):
-                raise Exception("Operation not allowed")
+            try:
+                driver.get(url)
+                time.sleep(delay)
 
-            temp_file = tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False, suffix=sanitized_name)
-            temp_file_name = temp_file.name
-            driver.save_screenshot(temp_file_name)
-        except Exception as e:
-            logging.error(f"An error occurred: {str(e)}")
-            abort(500, "An error occurred while taking the screenshot")
-        finally:
-            driver.quit()
+                sanitized_name = secure_filename(f"screenshot.{format}")
+                fullpath = os.path.normpath(os.path.join(tmp_dir, sanitized_name))
 
-        # Serve the screenshot file
-        try:
+                if not fullpath.startswith(tmp_dir):
+                    raise Exception("Operation not allowed")
+
+                temp_file = tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False, suffix=sanitized_name)
+                temp_file_name = temp_file.name
+                driver.save_screenshot(temp_file_name)
+            except Exception as e:
+                logging.error(f"An error occurred: {str(e)}")
+                abort(500, "An error occurred while taking the screenshot")
+            finally:
+                driver.quit()
+
+            # Serve the screenshot file
             response = send_file(temp_file_name, mimetype=f'image/{format}', as_attachment=True)
             response.headers["Content-Disposition"] = f"attachment; filename={sanitized_name}"
             return response
+
         finally:  # Cleanup after serving the screenshot
-            os.remove(temp_file_name)
-            os.rmdir(tmp_dir)
+            if 'temp_file_name' in locals() and os.path.exists(temp_file_name):
+                os.remove(temp_file_name)
+                os.rmdir(tmp_dir)

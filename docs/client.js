@@ -10,10 +10,7 @@ $(document).ready(function() {
 
     // Format button behavior
     $("#formatBtnGroup button").click(function() {
-        // Set all buttons to secondary color
-        $("#formatBtnGroup button").removeClass("btn-primary").addClass("btn-secondary");
-        
-        // Set the clicked button to primary color
+        $(this).siblings().removeClass("btn-primary").addClass("btn-secondary");
         $(this).removeClass("btn-secondary").addClass("btn-primary");
 
         // Update the format value based on the clicked button
@@ -55,17 +52,15 @@ $(document).ready(function() {
 
         // Get the format and image URL
         const format = $("#formatBtnGroup .btn-primary").data("format") || "png";
-        let imageUrl = $("#resultContainer img").attr('src');
-        let link = document.createElement('a');
-        link.href = imageUrl;
-
-        // Generate a timestamp in the format YYYYMMDD-HHMMSS
+        const imageUrl = $("#resultContainer img").attr('src');
         const now = new Date();
         const timestamp = now.toISOString().slice(0, 10).replace(/-/g, '') + '-' + now.toISOString().slice(11, 19).replace(/:/g, '');
+        const link = document.createElement('a');
 
+        link.href = imageUrl;
         link.download = `screenshot-${timestamp}.${format}`;
         link.click();
-    });    
+    });
 
     // Function to handle the screenshot request
     $("#submitButton").click(function(e) {
@@ -76,10 +71,10 @@ $(document).ready(function() {
 
         // Disable the saveButton until the new screenshot is loaded
         $("#saveButton").prop("disabled", true);
-
+        
         $("#screenshotSpinner").show();  // Show the spinner
         $("#submitButton").prop("disabled", true);
-        
+
         // Get input values
         const apiUrl = $("#apiUrl").val();
         const apiKey = $("#apiKey").val();
@@ -107,59 +102,42 @@ $(document).ready(function() {
             "Authorization": `Bearer ${apiKey}`
         };
 
-        // AJAX call to the screenshot API
-        $.ajax({
-            url: requestUrl,
-            type: "GET",
+        axios.get(requestUrl, {
             headers: headers,
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function(blob) {
-                const imageUrl = URL.createObjectURL(blob);
-
-                // Fade out the error message (if present) when the screenshot button is pressed
-                $("#errorContainer").fadeOut();
-
-                // Set the image URL as the source of the image tag
-                $("#resultContainer").html('<a href="' + imageUrl + '" target="_blank" rel="noopener noreferrer"><img src="' + imageUrl + '" style="display: none;" /></a>');
-                
-                // First, fade in the image
-                $("#resultContainer img").fadeIn(1000, function() {
-                    // After the image has faded in, smoothly scroll to its position
-                    $('html, body').animate({
-                        scrollTop: $("#actionBar").offset().top
-                    }, 1000);
-                });
-
-                // Enable the saveButton as the screenshot has loaded
-                $("#saveButton").prop("disabled", false);
-            },
-            error: function(error) {
-                let errorMessage = 'There was an issue capturing the screenshot.';
-                
-                // Check if the error response has a message and use it
-                if (error && error.responseJSON && error.responseJSON.message) {
-                    errorMessage = error.responseJSON.message;
-                }
-                
-                $("#errorContainer").html(`
-                    <div class="alert alert-danger alert-dismissible fade show mb-3 mt-15" role="alert">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
-                            <h4>Application Error</h4>
-                        </div>
-                        <p>
-                            ${errorMessage}
-                        </p>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `);
-            },
-            complete: function() {
-                $("#screenshotSpinner").hide();  // Hide the spinner
-                $("#submitButton").prop("disabled", false);
+            responseType: 'blob'
+        })
+        .then(response => {
+            const imageUrl = URL.createObjectURL(response.data);
+            $("#errorContainer").fadeOut();
+            $("#resultContainer").html('<a href="' + imageUrl + '" target="_blank" rel="noopener noreferrer"><img src="' + imageUrl + '" style="display: none;" /></a>');
+            $("#resultContainer img").fadeIn(1000, function() {
+                $('html, body').animate({
+                    scrollTop: $("#actionBar").offset().top
+                }, 1000);
+            });
+            $("#saveButton").prop("disabled", false);
+        })
+        .catch(error => {
+            let errorMessage = 'There was an issue capturing the screenshot.';
+            if (error && error.response && error.response.data && error.response.data.message) {
+                errorMessage = error.response.data.message;
             }
+            $("#errorContainer").html(`
+                <div class="alert alert-danger alert-dismissible fade show mb-3 mt-15" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
+                        <h4>Application Error</h4>
+                    </div>
+                    <p>
+                        ${errorMessage}
+                    </p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `);
+        })
+        .finally(() => {
+            $("#screenshotSpinner").hide();
+            $("#submitButton").prop("disabled", false);
         });
     });
 
