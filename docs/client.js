@@ -1,5 +1,25 @@
 $(document).ready(function() {
 
+    // Event listener for the delay slider input
+    const delaySlider = $("#delaySlider");
+    const delayValue = $("#delayValue");
+
+    delaySlider.on('input', function() {
+        delayValue.text(delaySlider.val());
+    });
+
+    // Format button behavior
+    $("#formatBtnGroup button").click(function() {
+        // Set all buttons to secondary color
+        $("#formatBtnGroup button").removeClass("btn-primary").addClass("btn-secondary");
+        
+        // Set the clicked button to primary color
+        $(this).removeClass("btn-secondary").addClass("btn-primary");
+
+        // Update the format value based on the clicked button
+        $("#format").val($(this).data("format"));
+    });
+
     // Event listeners for the collapsible div
     $('#settingsContent').on('show.bs.collapse', function() {
         $("#toggleIcon").removeClass('fa-chevron-down').addClass('fa-chevron-up');
@@ -34,7 +54,7 @@ $(document).ready(function() {
         e.preventDefault();
 
         // Get the format and image URL
-        const format = $("#format").val() || "png";
+        const format = $("#formatBtnGroup .btn-primary").data("format") || "png";
         let imageUrl = $("#resultContainer img").attr('src');
         let link = document.createElement('a');
         link.href = imageUrl;
@@ -65,8 +85,8 @@ $(document).ready(function() {
         const apiKey = $("#apiKey").val();
         const websiteUrl = encodeURIComponent($("#websiteUrl").val());
         const viewport = $("#viewport").val() || "1280x960";
-        const format = $("#format").val() || "png";
-        const delay = $("#delay").val() || "1";
+        const format = $("#formatBtnGroup .btn-primary").data("format") || "png";
+        const delay = $("#delaySlider").val() || "1";  // Use the slider value
 
         // Base request URL
         let requestUrl = `${apiUrl}/screenshot?url=${websiteUrl}`;
