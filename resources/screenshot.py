@@ -33,18 +33,15 @@ class ScreenshotAPI(Resource):
             if not (0 < width <= MAX_SIZE) or not (0 < height <= MAX_SIZE):
                 abort(400, f"Invalid viewport dimensions. Dimensions must be between 1 and {MAX_SIZE}")
 
-            format = request.args.get('format', 'png')
-            if format not in ['png', 'jpg', 'jpeg']:
-                abort(400, "Invalid format. Supported formats are png, jpg, jpeg")
+            format = request.args.get('format', 'PNG').upper()
+            if format not in ['PNG', 'JPG']:
+                abort(400, "Invalid format. Supported formats are PNG, JPG")
 
             # Adding a delay with a cap
             delay = request.args.get('delay', default=0, type=int)
             MAX_DELAY = 30  # Set to your desired max delay
             if delay < 0 or delay > MAX_DELAY:
                 abort(400, f"Invalid delay. Delay must be between 0 and {MAX_DELAY}")
-
-            # Dark mode option (default: false)
-            darkmode = request.args.get('darkmode', 'false').lower() == 'true'
 
             # Setup Selenium with headless Chrome
             chrome_options = Options()
@@ -53,11 +50,6 @@ class ScreenshotAPI(Resource):
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
             chrome_options.add_argument(f"--window-size={width},{height}")
-
-            # Add dark mode flag if requested
-            if darkmode:
-                chrome_options.add_argument("--force-dark-mode")
-                chrome_options.add_argument("--enable-features=WebUIDarkMode")
 
             driver = webdriver.Chrome(options=chrome_options)
             driver.set_page_load_timeout(30)  # set a 30-second timeout for page load
