@@ -75,6 +75,22 @@ $(document).ready(function() {
     $("#submitButton").click(function(e) {
         e.preventDefault();
 
+        // Validation
+        if (!apiUrl.trim()) {
+            displayErrorMessage("Please provide an API URL.");
+            return;
+        }
+
+        if (!websiteUrl.trim()) {
+            displayErrorMessage("Please provide a website URL.");
+            return;
+        }
+
+        if (viewport && !/^\d+x\d+$/.test(viewport)) {
+            displayErrorMessage("Invalid viewport format. It should be like 800x600.");
+            return;
+        }
+
         // Collapse the settings div if it's open
         $('#settingsContent').collapse('hide');
 
@@ -149,6 +165,22 @@ $(document).ready(function() {
             $("#submitButton").prop("disabled", false);
         });
     });
+
+    function displayErrorMessage(message) {
+        $("#errorContainer").html(`
+            <div class="alert alert-danger alert-dismissible fade show mb-3 mt-15" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
+                    <h4>Application Error</h4>
+                </div>
+                <p>
+                    ${message}
+                </p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `);
+        $("#errorContainer").fadeIn();
+    }
 
     // Function to handle the settings save
     $("#apiSettingsModal .btn-primary").click(function(e) {
