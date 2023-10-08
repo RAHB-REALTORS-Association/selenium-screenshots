@@ -1,38 +1,34 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 
     // Add event listener for "Enter" keystroke on the URL input
-    $("#websiteUrl").keypress(function(e) {
-        if (e.which == 13) {  // Check if the key is "Enter"
-            e.preventDefault();  // Prevent the default action (form submission)
-            $("#submitButton").click();  // Trigger the click event on the screenshot button
+    const websiteUrl = document.querySelector("#websiteUrl");
+    websiteUrl.addEventListener("keypress", function(e) {
+        if (e.keyCode === 13) { 
+            e.preventDefault();
+            document.querySelector("#submitButton").click();
         }
     });
 
     // Event listener for the delay slider input
-    const delaySlider = $("#delaySlider");
-    const delayValue = $("#delayValue");
+    const delaySlider = document.querySelector("#delaySlider");
+    const delayValue = document.querySelector("#delayValue");
 
-    delaySlider.on('input', function() {
-        const delaySeconds = delaySlider.val();
-        delayValue.text(`${delaySeconds} ${delaySeconds == 1 ? 'second' : 'seconds'}`);
+    delaySlider.addEventListener("input", function() {
+        const delaySeconds = delaySlider.value;
+        delayValue.textContent = `${delaySeconds} ${delaySeconds == 1 ? 'second' : 'seconds'}`;
     });
 
     // Format button behavior
-    $("#formatBtnGroup button").click(function() {
-        $(this).siblings().removeClass("btn-primary").addClass("btn-secondary");
-        $(this).removeClass("btn-secondary").addClass("btn-primary");
-
-        // Update the format value based on the clicked button
-        $("#format").val($(this).data("format"));
-    });
-
-    // Event listeners for the collapsible div
-    $('#settingsContent').on('show.bs.collapse', function() {
-        $("#toggleIcon").removeClass('fa-chevron-down').addClass('fa-chevron-up');
-    });
-
-    $('#settingsContent').on('hide.bs.collapse', function() {
-        $("#toggleIcon").removeClass('fa-chevron-up').addClass('fa-chevron-down');
+    document.querySelectorAll("#formatBtnGroup button").forEach(button => {
+        button.addEventListener("click", function() {
+            button.parentElement.querySelectorAll("button").forEach(sibling => {
+                sibling.classList.remove("btn-primary");
+                sibling.classList.add("btn-secondary");
+            });
+            button.classList.remove("btn-secondary");
+            button.classList.add("btn-primary");
+            document.querySelector("#format").value = button.dataset.format;
+        });
     });
 
     // Load the API settings from either local storage or session storage
@@ -40,28 +36,28 @@ $(document).ready(function() {
     const storedApiKey = localStorage.getItem("apiKey") || sessionStorage.getItem("apiKey");
 
     if (storedApiUrl) {
-        $("#apiUrl").val(storedApiUrl);
+        document.querySelector("#apiUrl").value = storedApiUrl;
     }
 
     if (storedApiKey) {
-        $("#apiKey").val(storedApiKey);
+        document.querySelector("#apiKey").value = storedApiKey;
     }
 
     // Check if settings are absent in both local and session storage
     if (!storedApiUrl) {
-        $('#apiSettingsModal').modal('show');
+        const apiSettingsModal = new bootstrap.Modal(document.querySelector('#apiSettingsModal'));
+        apiSettingsModal.show();
     }
 
     // Initially disable the saveButton
-    $("#saveButton").prop("disabled", true);
+    document.querySelector("#saveButton").disabled = true;
 
     // Function to trigger the download of the image
-    $("#saveButton").click(function(e) {
+    document.querySelector("#saveButton").addEventListener("click", function(e) {
         e.preventDefault();
 
-        // Get the format and image URL
-        const format = $("#formatBtnGroup .btn-primary").data("format") || "png";
-        const imageUrl = $("#resultContainer img").attr('src');
+        const format = document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "png";
+        const imageUrl = document.querySelector("#resultContainer img").getAttribute('src');
         const now = new Date();
         const timestamp = now.toISOString().slice(0, 10).replace(/-/g, '') + '-' + now.toISOString().slice(11, 19).replace(/:/g, '');
         const link = document.createElement('a');
@@ -72,15 +68,13 @@ $(document).ready(function() {
     });
 
     // Function to handle the screenshot request
-    $("#submitButton").click(function(e) {
+    document.querySelector("#submitButton").addEventListener("click", function(e) {
         e.preventDefault();
 
-        // Get input values for validation
-        const apiUrlForValidation = $("#apiUrl").val();
-        const websiteUrlForValidation = $("#websiteUrl").val();
-        const viewportForValidation = $("#viewport").val();
+        const apiUrlForValidation = document.querySelector("#apiUrl").value;
+        const websiteUrlForValidation = document.querySelector("#websiteUrl").value;
+        const viewportForValidation = document.querySelector("#viewport").value;
 
-        // Validation
         if (!apiUrlForValidation.trim()) {
             displayErrorMessage("Please provide an API URL.");
             return;
@@ -97,21 +91,22 @@ $(document).ready(function() {
         }
 
         // Collapse the settings div if it's open
-        $('#settingsContent').collapse('hide');
+        document.querySelector('#settingsContent').classList.remove('show');
 
         // Disable the saveButton until the new screenshot is loaded
-        $("#saveButton").prop("disabled", true);
-        
-        $("#screenshotSpinner").show();  // Show the spinner
-        $("#submitButton").prop("disabled", true);
+        document.querySelector("#saveButton").disabled = true;
+
+        // Show the spinner and disable the submitButton
+        document.querySelector("#screenshotSpinner").style.display = "inline-block";
+        document.querySelector("#submitButton").disabled = true;
 
         // Get input values
-        const apiUrl = $("#apiUrl").val();
-        const apiKey = $("#apiKey").val();
-        const websiteUrl = encodeURIComponent($("#websiteUrl").val());
-        const viewport = $("#viewport").val() || "1280x960";
-        const format = $("#formatBtnGroup .btn-primary").data("format") || "png";
-        const delay = $("#delaySlider").val() || "1";  // Use the slider value
+        const apiUrl = document.querySelector("#apiUrl").value;
+        const apiKey = document.querySelector("#apiKey").value;
+        const websiteUrl = encodeURIComponent(document.querySelector("#websiteUrl").value);
+        const viewport = document.querySelector("#viewport").value || "1280x960";
+        const format = document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "png";
+        const delay = document.querySelector("#delaySlider").value || "1";
 
         // Base request URL
         let requestUrl = `${apiUrl}/screenshot?url=${websiteUrl}`;
@@ -138,21 +133,22 @@ $(document).ready(function() {
         })
         .then(response => {
             const imageUrl = URL.createObjectURL(response.data);
-            $("#errorContainer").fadeOut();
-            $("#resultContainer").html('<a href="' + imageUrl + '" target="_blank" rel="noopener noreferrer"><img src="' + imageUrl + '" style="display: none;" /></a>');
-            $("#resultContainer img").fadeIn(1000, function() {
-                $('html, body').animate({
-                    scrollTop: $("#actionBar").offset().top
-                }, 1000);
+            document.querySelector("#errorContainer").style.display = 'none';
+            document.querySelector("#resultContainer").innerHTML = `<a href="${imageUrl}" target="_blank" rel="noopener noreferrer"><img src="${imageUrl}" style="display: none;" /></a>`;
+            const resultImg = document.querySelector("#resultContainer img");
+            resultImg.style.display = 'block'; // This is a simplified fadeIn. For a fade effect, you'd need a bit more logic or CSS transitions.
+            window.scrollTo({ 
+            top: document.querySelector("#actionBar").offsetTop, 
+            behavior: 'smooth' 
             });
-            $("#saveButton").prop("disabled", false);
+            document.querySelector("#saveButton").disabled = false;
         })
         .catch(error => {
             let errorMessage = 'There was an issue capturing the screenshot.';
             if (error && error.response && error.response.data && error.response.data.message) {
                 errorMessage = error.response.data.message;
             }
-            $("#errorContainer").html(`
+            document.querySelector("#errorContainer").innerHTML = `
                 <div class="alert alert-danger alert-dismissible fade show mb-3 mt-15" role="alert">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
@@ -163,16 +159,18 @@ $(document).ready(function() {
                     </p>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            `);
+            `;
         })
         .finally(() => {
-            $("#screenshotSpinner").hide();
-            $("#submitButton").prop("disabled", false);
+            document.querySelector("#screenshotSpinner").style.display = 'none';
+            document.querySelector("#submitButton").disabled = false;
         });
+
     });
 
     function displayErrorMessage(message) {
-        $("#errorContainer").html(`
+        const errorContainer = document.querySelector("#errorContainer");
+        errorContainer.innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show mb-3 mt-15" role="alert">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
@@ -183,17 +181,16 @@ $(document).ready(function() {
                 </p>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        `);
-        $("#errorContainer").fadeIn();
+        `;
+        errorContainer.style.display = 'block';
     }
 
     // Function to handle the settings save
-    $("#apiSettingsModal .btn-primary").click(function(e) {
-        const apiUrl = $("#apiUrl").val();
-        const apiKey = $("#apiKey").val();
+    document.querySelector("#apiSettingsModal .btn-primary").addEventListener("click", function(e) {
+        const apiUrl = document.querySelector("#apiUrl").value;
+        const apiKey = document.querySelector("#apiKey").value;
 
-        // Save the API settings to local storage or session storage
-        if ($("#saveSettingsCheckbox").is(":checked")) {
+        if (document.querySelector("#saveSettingsCheckbox").checked) {
             localStorage.setItem("apiUrl", apiUrl);
             localStorage.setItem("apiKey", apiKey);
         } else {
