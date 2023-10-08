@@ -85,21 +85,24 @@ curl -H "Authorization: Bearer YOUR_API_AUTHENTICATION_TOKEN" \
 ```
 
 ## 🐳 Running with Docker
-To build and run the application using Docker:
+To build and run the application locally using Docker for testing:
 
 ```bash
-docker build -t selenium-screenshots .
-docker run -d -p 8080:8080 \
--e BEARER_TOKEN=your_api_authentication_token -e ALLOWED_ORIGINS=https://example.com \
---name screenshot-service selenium-screenshots
+docker buildx build --platform linux/amd64 -t selenium-screenshots .
+docker run --platform linux/amd64 -p 5000:8080 \
+-e ALLOWED_ORIGINS="*" \
+--name screenshot-service \
+selenium-screenshots
 ```
 
-Or pull the pre-built Docker image from GHCR.io:
+Or pull the pre-built Docker image from GHCR.io on a server for production:
 ```bash
 docker pull ghcr.io/rahb-realtors-association/selenium-screenshots:latest
 docker run -d -p 8080:8080 \
--e BEARER_TOKEN=your_api_authentication_token -e ALLOWED_ORIGINS=https://example.com \
---name screenshot-service ghcr.io/rahb-realtors-association/selenium-screenshots:latest
+-e BEARER_TOKEN="your_api_authentication_token" \
+-e ALLOWED_ORIGINS="https://example.com" \
+--name screenshot-service \
+ghcr.io/rahb-realtors-association/selenium-screenshots:latest
 ```
 
 ## 🌐 Community
