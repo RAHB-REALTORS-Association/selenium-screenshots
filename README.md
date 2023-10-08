@@ -64,10 +64,9 @@ python -m gunicorn --config ./gunicorn_config.py app:app
 Make a GET request to `/screenshot` endpoint with the following parameters:
 
 - `url` (required): The URL of the website to screenshot.
-- `viewport` (optional, default '800x600'): The viewport size.
-- `format` (optional, default 'png'): The screenshot format, supports png, jpg, jpeg.
+- `viewport` (optional, default '1440x900'): The viewport size.
+- `format` (optional, default 'PNG'): The screenshot format, supports PNG, JPG.
 - `delay` (optional, default '0'): The delay before the screenshot is taken to allow the page to load.
-- `darkmode` (optional, default 'false'): A flag to toggle dark mode for the website. Accepts 'true' or 'false'.
 
 ### Examples
 Request to capture a screenshot:
