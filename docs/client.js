@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="alert alert-danger alert-dismissible fade show mb-3 mt-15" role="alert">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
-                        <h4>Application Error</h4>
+                        <h4>Server Error</h4>
                     </div>
                     <p>
                         ${errorMessage}
