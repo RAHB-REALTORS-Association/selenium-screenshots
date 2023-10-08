@@ -29,6 +29,9 @@ class ScreenshotAPI(Resource):
                 width, height = map(int, viewport.split('x'))
             except ValueError:
                 abort(400, "Invalid viewport format. It should be <width>x<height>")
+            MAX_SIZE = 10000
+            if not (0 < width <= MAX_SIZE) or not (0 < height <= MAX_SIZE):
+                abort(400, f"Invalid viewport dimensions. Dimensions must be between 1 and {MAX_SIZE}")
 
             format = request.args.get('format', 'png')
             if format not in ['png', 'jpg', 'jpeg']:
