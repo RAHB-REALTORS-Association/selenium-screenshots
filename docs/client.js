@@ -13,7 +13,8 @@ $(document).ready(function() {
     const delayValue = $("#delayValue");
 
     delaySlider.on('input', function() {
-        delayValue.text(delaySlider.val());
+        const delaySeconds = delaySlider.val();
+        delayValue.text(`${delaySeconds} ${delaySeconds == 1 ? 'second' : 'seconds'}`);
     });
 
     // Format button behavior
