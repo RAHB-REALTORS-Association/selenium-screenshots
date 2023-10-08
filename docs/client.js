@@ -121,12 +121,20 @@ document.addEventListener("DOMContentLoaded", function() {
         axios.get(requestUrl, { headers, responseType: 'blob' })
         .then(response => {
             const imageUrl = URL.createObjectURL(response.data);
+            errorContainer.style.display = 'none'; 
             resultContainer.innerHTML = `<a href="${imageUrl}" target="_blank" rel="noopener noreferrer"><img src="${imageUrl}" style="display: none;" /></a>`;
             const resultImg = resultContainer.querySelector("img");
             resultImg.style.display = 'block';
-            window.scrollTo({ top: settingsContent.offsetTop, behavior: 'smooth' });
+            
+            setTimeout(() => {
+                window.scrollTo({ 
+                    top: userForm.offsetTop, 
+                    behavior: 'smooth' 
+                });
+            }, 50);  // Delay the scroll by 50 milliseconds
+        
             saveButton.disabled = false;
-        })
+        })        
         .catch(error => {
             let errorMessage = 'There was an issue capturing the screenshot.';
             if (error && error.response && error.response.data && error.response.data.message) {
