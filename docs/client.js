@@ -1,5 +1,13 @@
 $(document).ready(function() {
 
+    // Add event listener for "Enter" keystroke on the URL input
+    $("#websiteUrl").keypress(function(e) {
+        if (e.which == 13) {  // Check if the key is "Enter"
+            e.preventDefault();  // Prevent the default action (form submission)
+            $("#submitButton").click();  // Trigger the click event on the screenshot button
+        }
+    });
+
     // Event listener for the delay slider input
     const delaySlider = $("#delaySlider");
     const delayValue = $("#delayValue");
