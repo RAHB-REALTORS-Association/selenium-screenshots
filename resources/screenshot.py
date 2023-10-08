@@ -24,7 +24,7 @@ class ScreenshotAPI(Resource):
             if not url or not validate_url(url):
                 abort(400, "Invalid or missing URL")
 
-            viewport = request.args.get('viewport', '800x600')
+            viewport = request.args.get('viewport', '1440x900')
             try:
                 width, height = map(int, viewport.split('x'))
             except ValueError:

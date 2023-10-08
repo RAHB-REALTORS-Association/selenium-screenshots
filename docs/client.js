@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
     saveButton.addEventListener("click", function(e) {
         e.preventDefault();
 
-        const format = document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "PNG";
+        const format = (document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "PNG").toLowerCase();
         const imageUrl = resultContainer.querySelector("img").getAttribute('src');
         const now = new Date();
         const timestamp = now.toISOString().slice(0, 10).replace(/-/g, '') + '-' + now.toISOString().slice(11, 19).replace(/:/g, '');
