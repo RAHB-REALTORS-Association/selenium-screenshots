@@ -75,19 +75,24 @@ $(document).ready(function() {
     $("#submitButton").click(function(e) {
         e.preventDefault();
 
+        // Get input values for validation
+        const apiUrlForValidation = $("#apiUrl").val();
+        const websiteUrlForValidation = $("#websiteUrl").val();
+        const viewportForValidation = $("#viewport").val();
+
         // Validation
-        if (!apiUrl.trim()) {
+        if (!apiUrlForValidation.trim()) {
             displayErrorMessage("Please provide an API URL.");
             return;
         }
 
-        if (!websiteUrl.trim()) {
+        if (!websiteUrlForValidation.trim()) {
             displayErrorMessage("Please provide a website URL.");
             return;
         }
 
-        if (viewport && !/^\d+x\d+$/.test(viewport)) {
-            displayErrorMessage("Invalid viewport format. It should be like 800x600.");
+        if (viewportForValidation && !/^\d+x\d+$/.test(viewportForValidation)) {
+            displayErrorMessage("Invalid viewport format. It should be like 1280x960.");
             return;
         }
 
