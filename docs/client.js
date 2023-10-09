@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const apiUrl = apiUrlInput.value;
         const apiKey = apiKeyInput.value;
         const websiteUrlValue = websiteUrl.value;
-        const viewport = document.querySelector("#viewport").value || "1280x960";
-        const format = document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "png";
+        const viewport = document.querySelector("#viewport").value || "1440x900";
+        const format = document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "PNG";
         const delay = delaySlider.value || "1";
 
         // Validation
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
         if (viewport && !/^\d+x\d+$/.test(viewport)) {
-            displayErrorMessage("Invalid viewport format. It should be like 1280x960.");
+            displayErrorMessage("Invalid viewport format. It should be like 1440x900.");
             return;
         }
 
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
     saveButton.addEventListener("click", function(e) {
         e.preventDefault();
 
-        const format = document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "png";
+        const format = (document.querySelector("#formatBtnGroup .btn-primary").dataset.format || "PNG").toLowerCase();
         const imageUrl = resultContainer.querySelector("img").getAttribute('src');
         const now = new Date();
         const timestamp = now.toISOString().slice(0, 10).replace(/-/g, '') + '-' + now.toISOString().slice(11, 19).replace(/:/g, '');

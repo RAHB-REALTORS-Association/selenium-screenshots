@@ -111,21 +111,21 @@
         <div class="card card-body bg-light">
             <!-- Viewport Label and Input -->
             <div class="mb-2">
-                <label for="viewport">Viewport size:</label>
-                <input class="form-control mt-2" id="viewport" placeholder="e.g. 1280x960" type="text"/>
+                <label for="viewport"><i class="fas fa-desktop"></i> Viewport Size</label>
+                <input class="form-control mt-2" id="viewport" placeholder="e.g. 1440x900" type="text"/>
             </div>
             
             <!-- Delay Slider and Format Buttons -->
             <div class="d-flex align-items-start justify-content-between mt-2">
                 <div class="flex-grow-1" id="delaySliderGroup">
-                    <label for="delaySlider" class="form-label">Delay:</label> <span id="delayValue">1 second</span>
-                    <input type="range" class="form-range m-2" id="delaySlider" min="1" max="30" value="1">
+                    <label for="delaySlider" class="form-label"><i class="fas fa-clock"></i> Delay:</label> <span id="delayValue">1 second</span>
+                    <input type="range" class="form-range m-2" id="delaySlider" min="1" max="20" value="1">
                 </div>
                 <div class="ml-3">
-                    <label class="form-label d-block">Format:</label>
+                    <label class="form-label d-block"><i class="fas fa-file-image"></i> Format</label>
                     <div class="btn-group" role="group" id="formatBtnGroup">
-                        <button type="button" class="btn btn-primary" data-format="png">PNG</button>
-                        <button type="button" class="btn btn-secondary" data-format="jpg">JPG</button>
+                        <button type="button" class="btn btn-primary" data-format="PNG">PNG</button>
+                        <button type="button" class="btn btn-secondary" data-format="JPG">JPG</button>
                     </div>
                 </div>
             </div>
