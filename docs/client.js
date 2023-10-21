@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const errorContainer = document.querySelector("#errorContainer");
     const resultContainer = document.querySelector("#resultContainer");
     const settingsContent = document.querySelector('#settingsContent');
+    const scrollToTopButton = document.getElementById("scrollToTopButton");
 
     // Constants for storage values
     const storedApiUrl = localStorage.getItem("apiUrl") || sessionStorage.getItem("apiUrl");
@@ -172,5 +173,53 @@ document.addEventListener("DOMContentLoaded", function() {
             sessionStorage.setItem("apiUrl", apiUrlInput.value);
             sessionStorage.setItem("apiKey", apiKeyInput.value);
         }
+    });
+
+    // Scroll to top button
+    let timeout;
+    let isHovered = false; // flag to check if the button is being hovered over
+
+    function showButton() {
+        scrollToTopButton.style.display = 'block';
+        scrollToTopButton.classList.remove('fade-out');
+        scrollToTopButton.classList.add('fade-in');
+    }
+
+    function hideButton() {
+        if (!isHovered) {
+            scrollToTopButton.classList.remove('fade-in');
+            scrollToTopButton.classList.add('fade-out');
+            setTimeout(() => {
+                if (!isHovered) {
+                    scrollToTopButton.style.display = 'none';
+                }
+            }, 500); // match this with your CSS transition time
+        }
+    }
+
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 200) {
+            showButton();
+            clearTimeout(timeout);
+            timeout = setTimeout(hideButton, 2000); // 2 seconds
+        }
+    });
+
+    // Handle hover state
+    scrollToTopButton.addEventListener('mouseenter', function() {
+        isHovered = true;
+    });
+
+    scrollToTopButton.addEventListener('mouseleave', function() {
+        isHovered = false;
+        hideButton();
+    });
+
+    // Scroll to top on click
+    scrollToTopButton.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
 });

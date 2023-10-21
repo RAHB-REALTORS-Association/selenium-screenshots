@@ -13,140 +13,122 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
         integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" rel="stylesheet" referrerpolicy="no-referrer" />
-    <style>
-        a.navbar-brand::after {
-            content: ' API';
-            color:orangered;
-            font-size: 14px;
-            vertical-align:top;
-        }
-        #resultContainer img {
-            padding-top: 25px;
-            width: 100%;
-            height: auto;
-        }
-        #settingsContent {
-            margin-top: -18px;
-        }
-        #settingsContent div.card {
-            border-radius: 0 0 0.25rem 0.25rem;
-        }
-        #delaySliderGroup {
-            margin-right: 32px;
-        }
-        .mt-15 {
-            margin-top: 15px !important;
-        }     
-    </style>
+    <style href="style.css?v=202310211127" rel="stylesheet" />
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="./"><span aria-hidden="true" class="fas fa-camera"></span>
-            <span aria-hidden="true" class="fas fa-globe"></span> Selenium Screenshots</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#apiSettingsModal">
-                        <span aria-hidden="true" class="fas fa-plug"></span> API Settings
-                    </a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/RAHB-REALTORS-Association/selenium-screenshots/blob/master/README.md#api-endpoint" target="_blank"
-                        rel="noopener noreferrer">
-                        <span aria-hidden="true" class="fas fa-book"></span> API Docs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/RAHB-REALTORS-Association/selenium-screenshots" target="_blank"
-                        rel="noopener noreferrer">
-                        <span aria-hidden="true" class="fab fa-github"></span> GitHub
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="container">
-    <div id="errorContainer"></div>
-    <div class="container bg-light p-5 my-3 rounded text-center">
-        <h1>📸🌐</h1>
-        <p class="lead">A simple API service that uses Selenium and Google Chrome to take screenshots of websites.</p>
-    </div>
-    <div class="modal fade" id="apiSettingsModal" tabindex="-1" aria-labelledby="apiSettingsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="apiSettingsModalLabel"><i class="fas fa-plug"></i> API Settings</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Please enter your API URL and API Key below:</p>
-                    <input class="form-control mb-3" id="apiUrl" placeholder="https://example.com:8080" type="text"/>
-                    <input class="form-control mb-3" id="apiKey" placeholder="API Key" type="password"/>
-                    <label class="mt-15 me-2 mb-2 ms-2"><input class="form-check-input me-2" id="saveSettingsCheckbox" type="checkbox"/>Save API settings to local storage</label>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                        Save <i class="fas fa-save" id="saveIcon"></i>
-                    </button>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="./"><span aria-hidden="true" class="fas fa-camera"></span>
+                    <span aria-hidden="true" class="fas fa-globe"></span> Selenium Screenshots</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#apiSettingsModal">
+                                <span aria-hidden="true" class="fas fa-plug"></span> API Settings
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/RAHB-REALTORS-Association/selenium-screenshots/blob/master/README.md#api-endpoint" target="_blank"
+                                rel="noopener noreferrer">
+                                <span aria-hidden="true" class="fas fa-book"></span> API Docs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/RAHB-REALTORS-Association/selenium-screenshots" target="_blank"
+                                rel="noopener noreferrer">
+                                <span aria-hidden="true" class="fab fa-github"></span> GitHub
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="alert alert-secondary mt-4 p-3 text-center" style="cursor: pointer; border: 1px solid #ccc; z-index:10;" data-bs-toggle="collapse" data-bs-target="#settingsContent" aria-expanded="false" aria-controls="settingsContent">
-        <span aria-hidden="true" class="fas fa-cog"></span><span style="text-transform:uppercase"> Capture Settings</span>
-        <i class="fas fa-chevron-down float-end mt-1" id="toggleIcon"></i>
-    </div>
-    <div class="collapse" id="settingsContent">
-        <div class="card card-body bg-light">
-            <!-- Viewport Label and Input -->
-            <div class="mb-2">
-                <label for="viewport"><i class="fas fa-desktop"></i> Viewport Size</label>
-                <input class="form-control mt-2" id="viewport" placeholder="e.g. 1440x900" type="text"/>
+        </nav>
+        <div class="container">
+            <div id="errorContainer"></div>
+            <div class="container bg-light p-5 my-3 rounded text-center">
+                <h1>📸🌐</h1>
+                <p class="lead">A simple API service that uses Selenium and Google Chrome to take screenshots of websites.</p>
             </div>
-            
-            <!-- Delay Slider and Format Buttons -->
-            <div class="d-flex align-items-start justify-content-between mt-2">
-                <div class="flex-grow-1" id="delaySliderGroup">
-                    <label for="delaySlider" class="form-label"><i class="fas fa-clock"></i> Delay:</label> <span id="delayValue">1 second</span>
-                    <input type="range" class="form-range m-2" id="delaySlider" min="1" max="20" value="1">
-                </div>
-                <div class="ml-3">
-                    <label class="form-label d-block"><i class="fas fa-file-image"></i> Format</label>
-                    <div class="btn-group" role="group" id="formatBtnGroup">
-                        <button type="button" class="btn btn-primary" data-format="PNG">PNG</button>
-                        <button type="button" class="btn btn-secondary" data-format="JPG">JPG</button>
+            <div class="modal fade" id="apiSettingsModal" tabindex="-1" aria-labelledby="apiSettingsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="apiSettingsModalLabel"><i class="fas fa-plug"></i> API Settings</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Please enter your API URL and API Key below:</p>
+                            <input class="form-control mb-3" id="apiUrl" placeholder="https://example.com:8080" type="text"/>
+                            <input class="form-control mb-3" id="apiKey" placeholder="API Key" type="password"/>
+                            <label class="mt-15 me-2 mb-2 ms-2"><input class="form-check-input me-2" id="saveSettingsCheckbox" type="checkbox"/>Save API settings to local storage</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                Save <i class="fas fa-save" id="saveIcon"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>             
-    </div>
-    <input class="form-control mt-4 btn-lg" id="websiteUrl" placeholder="Website URL to screenshot" type="text"/>
-    <form class="pt-2" id="userForm">
-        <div class="mb-3" id="actionBar">
-            <div class="mt-3 d-flex align-items-center justify-content-between">
-                <button class="btn btn-primary btn-lg" id="submitButton" type="submit">
-                    <i class="fas fa-camera" id="screenshotIcon"></i>
-                    Screenshot <span class="spinner-border spinner-border-sm" id="screenshotSpinner" role="status" aria-hidden="true" style="display: none;"></span>
-                </button>
-                <button class="btn btn-primary btn-lg ms-3" id="saveButton" type="button">
-                    Download <i class="fas fa-download" id="saveIcon"></i>
-                </button>                
+            <div class="alert alert-secondary mt-4 p-3 text-center" style="cursor: pointer; border: 1px solid #ccc; z-index:10;" data-bs-toggle="collapse" data-bs-target="#settingsContent" aria-expanded="false" aria-controls="settingsContent">
+                <span aria-hidden="true" class="fas fa-cog"></span><span style="text-transform:uppercase"> Capture Settings</span>
+                <i class="fas fa-chevron-down float-end mt-1" id="toggleIcon"></i>
             </div>
-            <div id="resultContainer"></div>
+            <div class="collapse" id="settingsContent">
+                <div class="card card-body bg-light">
+                    <!-- Viewport Label and Input -->
+                    <div class="mb-2">
+                        <label for="viewport"><i class="fas fa-desktop"></i> Viewport Size</label>
+                        <input class="form-control mt-2" id="viewport" placeholder="e.g. 1440x900" type="text"/>
+                    </div>
+                    
+                    <!-- Delay Slider and Format Buttons -->
+                    <div class="d-flex align-items-start justify-content-between mt-2">
+                        <div class="flex-grow-1" id="delaySliderGroup">
+                            <label for="delaySlider" class="form-label"><i class="fas fa-clock"></i> Delay:</label> <span id="delayValue">1 second</span>
+                            <input type="range" class="form-range m-2" id="delaySlider" min="1" max="20" value="1">
+                        </div>
+                        <div class="ml-3">
+                            <label class="form-label d-block"><i class="fas fa-file-image"></i> Format</label>
+                            <div class="btn-group" role="group" id="formatBtnGroup">
+                                <button type="button" class="btn btn-primary" data-format="PNG">PNG</button>
+                                <button type="button" class="btn btn-secondary" data-format="JPG">JPG</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>             
+            </div>
+            <input class="form-control mt-4 btn-lg" id="websiteUrl" placeholder="Website URL to screenshot" type="text"/>
+            <form class="pt-2" id="userForm">
+                <div class="mb-3" id="actionBar">
+                    <div class="mt-3 d-flex align-items-center justify-content-between">
+                        <button class="btn btn-primary btn-lg" id="submitButton" type="submit">
+                            <i class="fas fa-camera" id="screenshotIcon"></i>
+                            Screenshot <span class="spinner-border spinner-border-sm" id="screenshotSpinner" role="status" aria-hidden="true" style="display: none;"></span>
+                        </button>
+                        <button class="btn btn-primary btn-lg ms-3" id="saveButton" type="button">
+                            Download <i class="fas fa-download" id="saveIcon"></i>
+                        </button>                
+                    </div>
+                    <div id="resultContainer"></div>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
-<script src="client.js?v=202310080448"></script>
-</body>
+        <!-- Scroll to Top Button -->
+        <div class="scroll-to-top position-fixed bottom-0 end-0 me-4 mb-5">
+            <a id="scrollToTopButton" class="js-scroll-trigger d-block text-center text-white rounded-circle p-2 fade-out">
+                <i class="fas fa-angle-up fa-2x"></i>
+            </a>
+        </div>
+    <script src="client.js?v=202310211127"></script>
+    </body>
 </html>
