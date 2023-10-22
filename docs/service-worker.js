@@ -3,7 +3,7 @@
 const CACHE_NAME = 'selenium-screenshots-v2';
 const urlsToCache = [
   './',
-  'style.css?v=202310221831',
+  'style.css?v=202310221921',
   'client.js?v=202310221830',
   'favicon-16x16.png',
   'favicon-32x32.png',
