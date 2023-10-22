@@ -9,6 +9,9 @@ a.navbar-brand::after {
     font-size: 14px;
     vertical-align:top;
 }
+.modal-dialog {
+    padding-top:33%;
+}
 #resultContainer img {
     padding-top: 25px;
     width: 100%;
