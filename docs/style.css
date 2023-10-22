@@ -10,7 +10,7 @@ a.navbar-brand::after {
     vertical-align:top;
 }
 .modal-dialog {
-    padding-top:300px;
+    padding-top:200px;
 }
 #resultContainer img {
     padding-top: 25px;
