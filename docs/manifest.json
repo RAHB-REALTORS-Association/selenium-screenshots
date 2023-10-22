@@ -1,0 +1,22 @@
+{
+    "name": "Selenium Screenshots",
+    "short_name": "Screenshots",
+    "description": "An API for capturing website screenshots with Google Chrome.",
+    "start_url": "/selenium-screenshots/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#212529",
+    "orientation": "portrait-primary",
+    "icons": [
+      {
+        "src": "/selenium-screenshots/android-chrome-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/selenium-screenshots/android-chrome-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+}
