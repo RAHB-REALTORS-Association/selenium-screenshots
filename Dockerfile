@@ -13,7 +13,7 @@ RUN echo "deb http://deb.debian.org/debian bullseye contrib" >> /etc/apt/sources
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Chromedriver
-RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/117.0.5938.92/linux64/chromedriver-linux64.zip && \
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.159/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/bin/ && \
     chmod +x /usr/bin/chromedriver && \
