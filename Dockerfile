@@ -2,7 +2,7 @@ FROM python:3.11-slim-bullseye
 
 # Install dependencies for Chrome and fonts
 RUN apt-get update && \
-    apt-get install -y wget unzip apt-utils fonts-roboto fonts-noto fontconfig xfonts-utils && \
+    apt-get install -y wget unzip apt-utils fonts-roboto fonts-noto fontconfig xfonts-utils jq curl && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
@@ -12,12 +12,21 @@ RUN echo "deb http://deb.debian.org/debian bullseye contrib" >> /etc/apt/sources
     apt-get install -y ttf-mscorefonts-installer && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Chromedriver
-RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.159/linux64/chromedriver-linux64.zip && \
-    unzip chromedriver-linux64.zip && \
-    mv chromedriver-linux64/chromedriver /usr/bin/ && \
-    chmod +x /usr/bin/chromedriver && \
-    rm -rf chromedriver-linux64 chromedriver-linux64.zip
+# Fetch and install the latest stable ChromeDriver
+RUN set -ex; \
+    JSON_URL="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"; \
+    LATEST_STABLE=$(curl -s $JSON_URL | jq -r '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64").url'); \
+    if [ -n "$LATEST_STABLE" ] && [ "$LATEST_STABLE" != "null" ]; then \
+        echo "Downloading ChromeDriver from: $LATEST_STABLE"; \
+        wget "$LATEST_STABLE" -O chromedriver_linux64.zip && \
+        unzip chromedriver_linux64.zip && \
+        mv chromedriver-linux64/chromedriver /usr/bin/ && \
+        chmod +x /usr/bin/chromedriver && \
+        rm -rf chromedriver_linux64.zip chromedriver-linux64; \
+    else \
+        echo "Failed to resolve the latest stable ChromeDriver URL." >&2; \
+        exit 1; \
+    fi
 
 # Install Noto Color Emoji font and configure fontconfig
 RUN wget https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf -O /usr/share/fonts/NotoColorEmoji.ttf && \
