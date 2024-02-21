@@ -2,12 +2,27 @@
     "openapi": "3.0.2",
     "info": {
       "title": "Screenshot API",
-      "version": "1.0.0"
+      "version": "1.0.0",
+      "description": "This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.",
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      },
+      "contact": {
+        "name": "RAHB Lab",
+        "url": "https://lab.rahb.ca/"
+      }
     },
+    "servers": [
+      {
+        "url": "http://localhost:8000"
+      }
+    ],
     "paths": {
       "/screenshot": {
         "get": {
           "summary": "Take a screenshot of a website.",
+          "description": "Make a GET request to `/screenshot` endpoint with the required `url` parameter and optional `viewport`, `format`, and `delay` parameters to capture a screenshot. Requires API authentication using a bearer token.",
           "parameters": [
             {
               "name": "url",
@@ -21,7 +36,7 @@
             {
               "name": "viewport",
               "in": "query",
-              "description": "The viewport size. Default is '1440x900'.",
+              "description": "The viewport size. Default is '1440x900'. Useful for capturing screenshots of specific sizes.",
               "schema": {
                 "type": "string"
               }
@@ -29,7 +44,7 @@
             {
               "name": "format",
               "in": "query",
-              "description": "The screenshot format. Supports PNG, JPG. Default is 'PNG'.",
+              "description": "The screenshot format. Supports PNG, JPG. Default is 'PNG'. Choose between the two image formats for different use cases.",
               "schema": {
                 "type": "string"
               }
@@ -37,7 +52,7 @@
             {
               "name": "delay",
               "in": "query",
-              "description": "The delay before the screenshot is taken to allow the page to load. Default is '0'.",
+              "description": "The delay before the screenshot is taken to allow the page to load. Default is '0'. Useful for ensuring that dynamic content has loaded.",
               "schema": {
                 "type": "integer"
               }
@@ -45,7 +60,7 @@
           ],
           "responses": {
             "200": {
-              "description": "Screenshot successfully taken.",
+              "description": "Screenshot successfully taken. Returns the captured image in either PNG or JPG format.",
               "content": {
                 "image/png": {},
                 "image/jpeg": {}
@@ -61,9 +76,18 @@
         }
       }
     },
-    "servers": [
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "description": "Enter your API authentication token in this format: Bearer <your_api_authentication_token>"
+        }
+      }
+    },
+    "security": [
       {
-        "url": "http://localhost:8000"
+        "bearerAuth": []
       }
     ]
   }
