@@ -1,9 +1,9 @@
 {
-    "openapi": "3.0.2",
+    "openapi": "3.0.0",
     "info": {
       "title": "Screenshot API",
       "version": "1.0.0",
-      "description": "This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.",
+      "description": "This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.\n\nFor more information and source code, please visit the GitHub repository: [Selenium Screenshots](https://github.com/RAHB-REALTORS-Association/selenium-screenshots).",
       "license": {
         "name": "MIT",
         "url": "https://opensource.org/licenses/MIT"
