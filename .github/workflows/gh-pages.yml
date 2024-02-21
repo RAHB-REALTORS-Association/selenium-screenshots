@@ -1,0 +1,52 @@
+name: GH Pages Deployment
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - 'docs/'
+  workflow_dispatch:
+
+concurrency:
+    group: "pages"
+    cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_url: ${{ steps.upload-artifact.outputs.artifact-url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Generate Redoc HTML page
+        run: npx -y @redocly/cli build-docs docs/openapi.json -o docs/api/index.html
+
+      - name: Upload artifact for deployment
+        id: upload-artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: docs/
+          name: 'github-pages'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

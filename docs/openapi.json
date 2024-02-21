@@ -1,0 +1,69 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+      "title": "Screenshot API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/screenshot": {
+        "get": {
+          "summary": "Take a screenshot of a website.",
+          "parameters": [
+            {
+              "name": "url",
+              "in": "query",
+              "required": true,
+              "description": "The URL of the website to screenshot.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "viewport",
+              "in": "query",
+              "description": "The viewport size. Default is '1440x900'.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "format",
+              "in": "query",
+              "description": "The screenshot format. Supports PNG, JPG. Default is 'PNG'.",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "delay",
+              "in": "query",
+              "description": "The delay before the screenshot is taken to allow the page to load. Default is '0'.",
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Screenshot successfully taken.",
+              "content": {
+                "image/png": {},
+                "image/jpeg": {}
+              }
+            },
+            "401": {
+              "description": "Unauthorized. The API authentication token is missing or invalid."
+            },
+            "500": {
+              "description": "Internal Server Error. An error occurred while taking the screenshot."
+            }
+          }
+        }
+      }
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8000"
+      }
+    ]
+  }
