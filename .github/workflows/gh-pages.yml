@@ -3,8 +3,6 @@ name: GH Pages Deployment
 on:
   push:
     branches: ["master"]
-    paths:
-      - 'docs/**'
   workflow_dispatch:
 
 concurrency:
