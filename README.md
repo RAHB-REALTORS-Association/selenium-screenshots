@@ -10,6 +10,7 @@ This project provides a simple API service that uses Selenium and Google Chrome 
 - [✅ Requirements](#-requirements)
 - [🛠️ Configuration](#%EF%B8%8F-configuration)
 - [🧑‍💻 Usage](#-usage)
+- [📚 API Documentation](#-api-documentation)
 - [🐳 Running with Docker](#-running-with-docker)
 - [🌐 Community](#-community)
   - [Contributing 👥](#contributing-)
@@ -59,6 +60,10 @@ export BEARER_TOKEN=your_api_authentication_token
 export ALLOWED_ORIGINS=https://example.com
 python -m gunicorn --config ./gunicorn_config.py app:app
 ```
+
+## 📚 API Documentation
+
+Please refer to our comprehensive **[API documentation](https://rahb-realtors-association.github.io/selenium-screenshots/api/)** for detailed information about this service, including examples and usage guidelines. The API documentation provides a user-friendly interface for understanding how to use the Screenshot API effectively.
 
 ### API Endpoint
 Make a GET request to `/screenshot` endpoint with the following parameters:
