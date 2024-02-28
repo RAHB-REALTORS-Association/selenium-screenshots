@@ -2,6 +2,7 @@ name: Docker Image
 
 on:
   create:
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -60,5 +61,6 @@ jobs:
         uses: dokku/github-action@v1.4.0
         with:
           git_remote_url: ${{ env.DOKKU_REMOTE_URL }}
+          git_push_flags: --force
           ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
           deploy_docker_image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
