@@ -6,6 +6,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: rahb-realtors-association/selenium-screenshots
+  DOKKU_APP_NAME: screenshot-api
+  DOKKU_REMOTE_URL: ssh://dokku@oncornerstone.app:22/screenshot-api
 
 jobs:
   build-and-push-image:
@@ -45,3 +47,30 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-to-dokku:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+      packages: none
+
+    steps:
+      - name: Download Docker image
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          # Use the Git reference (branch or tag) as the Docker tag.
+          tag: ${{ steps.meta.outputs.tags }}
+        id: download-image
+
+      - name: Deploy to Dokku
+        uses: dokku/github-action@v1.4.0
+        with:
+          git_remote_url: ${{ env.DOKKU_REMOTE_URL }}
+          ci_branch_name: github.ref
+          ci_commit: ${{ steps.build-and-push-image.outputs.sha }}
+          ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+          deploy_docker_image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.download-image.outputs.tag }}
