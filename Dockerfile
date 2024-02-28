@@ -1,16 +1,13 @@
-FROM python:3.11-slim-bullseye
+# Stage 1: Build
+FROM python:3.11-slim-bullseye as builder
 
-# Install dependencies for Chrome and fonts
-RUN apt-get update && \
-    apt-get install -y wget unzip apt-utils fonts-roboto fonts-noto fontconfig xfonts-utils jq curl && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
-
-# Install Microsoft Core Fonts
-RUN echo "deb http://deb.debian.org/debian bullseye contrib" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y ttf-mscorefonts-installer && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install dependencies required for building the application
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    unzip \
+    apt-utils \
+    curl \
+    jq
 
 # Fetch and install the latest stable ChromeDriver
 RUN set -ex; \
@@ -27,6 +24,34 @@ RUN set -ex; \
         echo "Failed to resolve the latest stable ChromeDriver URL." >&2; \
         exit 1; \
     fi
+
+# Clean up unnecessary packages and files to reduce image size
+RUN apt-get remove --purge -y wget unzip apt-utils curl jq && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Stage 2: Runtime
+FROM python:3.11-slim-bullseye
+
+# Copy the ChromeDriver binary from the builder stage
+COPY --from=builder /usr/bin/chromedriver /usr/bin/chromedriver
+
+# Install Chrome
+RUN apt-get update && apt-get install -y wget apt-transport-https apt-utils \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install \
+    && rm -rf /var/lib/apt/lists/* google-chrome-stable_current_amd64.deb
+
+# Install runtime dependencies (fonts and minimal utilities)
+RUN echo "deb http://deb.debian.org/debian bullseye contrib" >> /etc/apt/sources.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    fonts-roboto \
+    fonts-noto \
+    fontconfig \
+    xfonts-utils \
+    ttf-mscorefonts-installer && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Noto Color Emoji font and configure fontconfig
 RUN wget https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf -O /usr/share/fonts/NotoColorEmoji.ttf && \
@@ -58,8 +83,10 @@ RUN wget https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji
 WORKDIR /app
 
 # Install Python dependencies
+#COPY --from=builder /root/.cache /root/.cache
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && \
+    rm -rf /root/.cache
 
 # Copy the application
 COPY . .
