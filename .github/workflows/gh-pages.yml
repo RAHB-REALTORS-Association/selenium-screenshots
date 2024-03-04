@@ -25,7 +25,7 @@ jobs:
           node-version: '16'
 
       - name: Generate Redoc HTML page
-        run: npx -y @redocly/cli build-docs docs/openapi.json -o docs/api/index.html
+        run: npx -y @redocly/cli build-docs docs/openapi.yaml -o docs/api/index.html
 
       - name: Upload artifact for deployment
         id: upload-artifact
