@@ -1,11 +1,12 @@
-from flask import request, send_file, abort
-from flask_restful import Resource
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+""" This module contains the ScreenshotAPI class which is a Flask-RESTful Resource """
 import tempfile
 import logging
 import time
 import os
+from flask import request, send_file, abort
+from flask_restful import Resource
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from werkzeug.utils import secure_filename
 from utilities import authenticate, validate_url
 
@@ -33,8 +34,8 @@ class ScreenshotAPI(Resource):
             if not (0 < width <= MAX_SIZE) or not (0 < height <= MAX_SIZE):
                 abort(400, f"Invalid viewport dimensions. Dimensions must be between 1 and {MAX_SIZE}")
 
-            format = request.args.get('format', 'PNG').upper()
-            if format not in ['PNG', 'JPG']:
+            img_format = request.args.get('format', 'PNG').upper()
+            if img_format not in ['PNG', 'JPG']:
                 abort(400, "Invalid format. Supported formats are PNG, JPG")
 
             # Adding a delay with a cap
