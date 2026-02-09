@@ -1,7 +1,7 @@
 Flask==3.1.2
 flask_cors==6.0.2
 flask-restful==0.3.10
-gunicorn==23.0.0
+gunicorn==25.0.3
 selenium==4.34.0
 urllib3==2.4.0
 werkzeug==3.1.5
