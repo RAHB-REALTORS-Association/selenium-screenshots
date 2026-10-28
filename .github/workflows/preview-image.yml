@@ -54,6 +54,10 @@ jobs:
         run: |
           docker build -f deploy/Proxy.Dockerfile -t screenshot-proxy:ci .
           sh tests/proxy_smoke.sh
+      - name: Build gateway and verify the Compose stack
+        run: |
+          docker build -f deploy/Gateway.Dockerfile -t screenshot-gateway:ci .
+          python tests/stack_smoke.py
       - uses: docker/build-push-action@v6
         with:
           context: .
@@ -69,6 +73,19 @@ jobs:
           file: deploy/Proxy.Dockerfile
           push: true
           platforms: linux/amd64
-          tags: ghcr.io/rahb-realtors-association/selenium-screenshots:proxy-staging
+          tags: |
+            ghcr.io/rahb-realtors-association/selenium-screenshots:proxy-staging
+            ghcr.io/rahb-realtors-association/selenium-screenshots:proxy-preview-${{ github.sha }}
           cache-from: type=gha,scope=proxy
           cache-to: type=gha,mode=max,scope=proxy
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Gateway.Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/rahb-realtors-association/selenium-screenshots:gateway-staging
+            ghcr.io/rahb-realtors-association/selenium-screenshots:gateway-preview-${{ github.sha }}
+          cache-from: type=gha,scope=gateway
+          cache-to: type=gha,mode=max,scope=gateway

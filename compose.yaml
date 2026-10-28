@@ -1,0 +1,89 @@
+services:
+  gateway:
+    image: ${GATEWAY_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:gateway-v1.6.1}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    group_add: ['10001']
+    environment:
+      BEARER_TOKEN: ''
+    volumes:
+      - api-socket:/run/capture:ro
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    expose: ['8080']
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD-SHELL, 'wget -q -O - http://127.0.0.1:8080/health >/dev/null']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 64
+  api:
+    image: ${API_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:v1.6.1}
+    restart: unless-stopped
+    init: true
+    # Coolify preserves explicit network_mode, unlike ordinary custom network lists.
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=./deploy/chromium-seccomp.json
+    environment:
+      BEARER_TOKEN: ${BEARER_TOKEN:?}
+      SCREENSHOT_PROXY: http://127.0.0.1:3128
+      EGRESS_PROXY_SOCKET: /run/egress/proxy.sock
+      GUNICORN_BIND: 127.0.0.1:8080,unix:/run/capture/api.sock
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://screenshots.oncornerstone.app}
+      ALLOW_PRIVATE_TARGETS: ${ALLOW_PRIVATE_TARGETS:-false}
+    volumes:
+      - api-socket:/run/capture
+      - proxy-socket:/run/egress:ro
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+      - /home/screenshot:size=64m,uid=10001,gid=10001,mode=0700
+    depends_on:
+      proxy:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, --max-time, '3', 'http://127.0.0.1:8080/health']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 512
+    stop_grace_period: 65s
+  proxy:
+    image: ${PROXY_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:proxy-v1.6.1}
+    restart: unless-stopped
+    init: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    environment:
+      BEARER_TOKEN: ''
+      ALLOW_PRIVATE_TARGETS: ${ALLOW_PRIVATE_TARGETS:-false}
+      EGRESS_PROXY_SOCKET: /run/egress/proxy.sock
+    volumes:
+      - proxy-socket:/run/egress
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    healthcheck:
+      test: [CMD-SHELL, "printf 'GET http://127.0.0.1/ HTTP/1.0\r\n\r\n' | socat -T3 - UNIX-CONNECT:/run/egress/proxy.sock | head -n 1 | grep -q '403'"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 128
+volumes:
+  api-socket:
+  proxy-socket:
