@@ -22,7 +22,7 @@ For a preview, override `API_IMAGE`, `PROXY_IMAGE` and `GATEWAY_IMAGE` with the 
 
 ## Sandbox profile
 
-`chromium-seccomp.json` is based on Docker's default profile, with clone, clone3, setns and unshare allowed for Chromium's user namespace sandbox. Compose reads it from the repository during container creation. No privileged mode, SYS_ADMIN capability or `--no-sandbox` flag is required. The full stack test verifies the browser with dropped capabilities and no-new-privileges enabled.
+`chromium-seccomp.json` is based on Docker's default profile, with clone, clone3, setns, unshare and chroot allowed for Chromium's user namespace sandbox. The chroot syscall must remain available inside that namespace when all outer container capabilities are dropped; the kernel still enforces namespace capabilities. Compose reads the profile from the repository during container creation. No privileged mode, SYS_ADMIN capability or `--no-sandbox` flag is required. The full stack test verifies the browser with dropped capabilities and no-new-privileges enabled.
 
 ## Migration and rollback
 

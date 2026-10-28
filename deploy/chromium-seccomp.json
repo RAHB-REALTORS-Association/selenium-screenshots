@@ -1028,12 +1028,7 @@
       "names": [
         "chroot"
       ],
-      "action": "SCMP_ACT_ALLOW",
-      "includes": {
-        "caps": [
-          "CAP_SYS_CHROOT"
-        ]
-      }
+      "action": "SCMP_ACT_ALLOW"
     },
     {
       "names": [
