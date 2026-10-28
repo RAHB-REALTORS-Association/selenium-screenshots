@@ -43,7 +43,7 @@ if __name__ == '__main__':
 class CaptureTests(unittest.TestCase):
     def test_cleanup_after_navigation_failure(self):
         from app import capture
-        with patch('app.Service'), patch('app.webdriver.Chrome') as chrome:
+        with patch('app.wait_for_render'), patch('app.Service'), patch('app.webdriver.Chrome') as chrome:
             driver = chrome.return_value
             driver.get.side_effect = RuntimeError('navigation failed')
             with self.assertRaises(RuntimeError):
@@ -53,18 +53,19 @@ class CaptureTests(unittest.TestCase):
     def test_jpeg_encoding_and_metrics(self):
         from app import capture
         import base64
-        with patch('app.Service'), patch('app.webdriver.Chrome') as chrome:
+        with patch('app.wait_for_render'), patch('app.Service'), patch('app.webdriver.Chrome') as chrome:
             driver = chrome.return_value
             driver.execute_cdp_cmd.return_value = {'data': base64.b64encode(b'\xff\xd8\xff').decode()}
             self.assertEqual(capture('https://example.com', 800, 600, 'JPG', 0, False, 'http://proxy:3128'), b'\xff\xd8\xff')
             self.assertEqual(driver.execute_cdp_cmd.call_args_list[0].args[1]['width'], 800)
-            self.assertEqual(driver.execute_cdp_cmd.call_args_list[1].args[1]['format'], 'jpeg')
+            captures = [c for c in driver.execute_cdp_cmd.call_args_list if c.args[0] == 'Page.captureScreenshot']
+            self.assertEqual(captures[0].args[1]['format'], 'jpeg')
             driver.quit.assert_called_once()
 
     def test_fullpage_limit_cleans_up(self):
         from app import capture
         from werkzeug.exceptions import BadRequest
-        with patch('app.Service'), patch('app.webdriver.Chrome') as chrome:
+        with patch('app.wait_for_render'), patch('app.Service'), patch('app.webdriver.Chrome') as chrome:
             driver = chrome.return_value
             driver.execute_script.return_value = [2000, 20000]
             with self.assertRaises(BadRequest):

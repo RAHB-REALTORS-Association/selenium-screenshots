@@ -33,3 +33,5 @@ PYTHONPATH=. SE_AVOID_STATS=true .venv/bin/python tests/browser_smoke.py
 ```
 
 The browser smoke uses an embedded fixture, so it does not require an outbound proxy or contact a target website. It verifies PNG/JPEG signatures, an exact 800×600 viewport, and an 800×1800 full-page capture; images are saved under `test-results/`. Serving real HTTP(S) captures still requires the configured filtering proxy.
+
+Capture readiness waits for visible image decoding, fonts and video data, then samples rendered pixels until stable. Static pages settle quickly; video/canvas introductions get at least eight seconds, with a twelve-second render budget so continuous animation cannot hang a request. The requested delay is additional. Animated pages can still differ by frame; the service does not rewrite their animation state.

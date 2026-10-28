@@ -37,6 +37,21 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
+          load: true
+          tags: screenshot-api:ci
+      - name: Verify real browser rendering before publishing
+        run: |
+          mkdir -p test-results
+          chmod 777 test-results
+          docker run --rm --network none \
+            --security-opt seccomp=deploy/chromium-seccomp.json \
+            -e PYTHONPATH=/app \
+            -v "$PWD/tests:/app/tests:ro" \
+            -v "$PWD/test-results:/app/test-results" \
+            --entrypoint python screenshot-api:ci tests/browser_smoke.py
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
           push: true
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}

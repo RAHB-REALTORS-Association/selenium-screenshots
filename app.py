@@ -11,6 +11,7 @@ from flask_cors import CORS
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from rendering import wait_for_render
 
 app = Flask(__name__)
 CORS(app, origins=os.environ.get('ALLOWED_ORIGINS', 'https://screenshots.oncornerstone.app').split(','))
@@ -47,6 +48,7 @@ def capture(url, width, height, image_format, delay, fullpage, proxy):
         if delay:
             import time
             time.sleep(delay)
+        wait_for_render(driver)
         params = {'format': 'jpeg' if image_format == 'JPG' else 'png', 'captureBeyondViewport': fullpage}
         if fullpage:
             dimensions = driver.execute_script('return [document.documentElement.scrollWidth, document.documentElement.scrollHeight]')
