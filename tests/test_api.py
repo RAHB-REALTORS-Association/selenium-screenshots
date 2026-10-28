@@ -12,7 +12,10 @@ class ApiTests(unittest.TestCase):
         self.addCleanup(self.env.stop)
 
     def test_auth_and_configuration(self):
-        self.assertEqual(self.client.get('/screenshot?url=https://example.com').status_code, 401)
+        response = self.client.get('/screenshot?url=https://example.com')
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertIn('message', response.get_json())
         with patch.dict(os.environ, {'SCREENSHOT_PROXY': ''}):
             self.assertEqual(self.client.get('/screenshot?url=https://example.com').status_code, 503)
 

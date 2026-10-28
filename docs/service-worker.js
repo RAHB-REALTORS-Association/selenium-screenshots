@@ -1,10 +1,10 @@
 // service-worker.js
 
-const CACHE_NAME = 'selenium-screenshots-v2';
+const CACHE_NAME = 'selenium-screenshots-v3';
 const urlsToCache = [
   './',
   'style.css?v=202310221921',
-  'client.js?v=202310221830',
+  'client.js?v=20261028-errors',
   'favicon-16x16.png',
   'favicon-32x32.png',
   'favicon-48x48.png',

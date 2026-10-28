@@ -5,7 +5,8 @@ import os
 import re
 from urllib.parse import urlsplit
 
-from flask import Flask, Response, abort, request
+from flask import Flask, Response, abort, request, jsonify
+from werkzeug.exceptions import HTTPException
 from flask_cors import CORS
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -58,6 +59,11 @@ def capture(url, width, height, image_format, delay, fullpage, proxy):
         driver.quit()
 
 
+@app.errorhandler(HTTPException)
+def http_error(error):
+    return jsonify(message=error.description, error=error.name), error.code
+
+
 @app.get('/screenshot')
 @app.get('/api/capture')
 def screenshot():
@@ -99,7 +105,6 @@ def screenshot():
     try:
         data = capture(url, width, height, image_format, int(delay_text), fullpage == '1', proxy)
     except Exception as exc:
-        from werkzeug.exceptions import HTTPException
         if isinstance(exc, HTTPException):
             raise
         app.logger.exception('Capture failed')

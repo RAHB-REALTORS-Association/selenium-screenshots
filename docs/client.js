@@ -1,3 +1,24 @@
+// Axios returns error bodies as Blobs when responseType is "blob".
+async function screenshotErrorMessage(error) {
+    if (!error.response) {
+        return "Unable to reach the API. Check the API URL, network, and CORS settings.";
+    }
+    const status = error.response.status;
+    if (status === 401) {
+        return "HTTP 401: API authentication failed. Check the API key for the selected API URL.";
+    }
+    let payload = error.response.data;
+    try {
+        if (payload && typeof payload.text === "function") payload = await payload.text();
+        if (typeof payload === "string") payload = JSON.parse(payload);
+    } catch (_) {
+        payload = null;
+    }
+    const message = payload && typeof payload.message === "string"
+        ? payload.message : "The API could not capture this page.";
+    return `HTTP ${status}: ${message}`;
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     // Constants for DOM elements
     const websiteUrl = document.querySelector("#websiteUrl");
@@ -69,10 +90,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     <i class="fas fa-exclamation-triangle me-2 pb-2"></i>
                     <h4>Application Error</h4>
                 </div>
-                <p>${message}</p>
+                <p class="error-message"></p>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         `;
+        errorContainer.querySelector('.error-message').textContent = message;
         errorContainer.style.display = 'block';
     }
 
@@ -136,12 +158,8 @@ document.addEventListener("DOMContentLoaded", function() {
         
             saveButton.disabled = false;
         })        
-        .catch(error => {
-            let errorMessage = 'There was an issue capturing the screenshot.';
-            if (error && error.response && error.response.data && error.response.data.message) {
-                errorMessage = error.response.data.message;
-            }
-            displayErrorMessage(errorMessage);
+        .catch(async error => {
+            displayErrorMessage(await screenshotErrorMessage(error));
         })
         .finally(() => {
             screenshotSpinner.style.display = 'none';
