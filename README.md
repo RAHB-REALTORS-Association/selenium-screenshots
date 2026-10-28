@@ -7,6 +7,9 @@ A Flask API that captures websites using Selenium and a Chromium browser. Both `
 - `BEARER_TOKEN`: API token. Requests fail closed if it is missing.
 - `SCREENSHOT_PROXY`: HTTP proxy URL, for example `http://egress-proxy:3128`.
 - `ALLOWED_ORIGINS`: comma-separated allowed web client origins.
+- `ALLOW_PRIVATE_TARGETS`: `false` by default. Set `true` on **both the API and proxy** to allow RFC1918 IPv4 destinations. Loopback, metadata/link-local, reserved addresses and IPv6 remain blocked. A missing or invalid setting cannot enable private captures.
+
+Two captures can run at once across the preloaded Gunicorn workers. Extra requests receive HTTP 503 with `Retry-After: 5`; callers should retry with backoff. Captures run in separate processes with a 55-second deadline, and their process groups are terminated on completion, error or timeout. The browser process environment excludes the API bearer token and deployment credentials. `GET /health` returns 200 only when required configuration is valid.
 
 **The proxy is a security boundary.** It must resolve destinations itself and reject loopback, private, link-local, reserved and metadata addresses, including IPv6, redirects, DNS rebinding and subresources. The container's network must prevent Chrome from bypassing that proxy, including direct DNS, TCP and UDP traffic. The application does not provide this proxy or enforce network policy. Do not expose the service until these controls are deployed and verified. Allow the service to reach only the proxy and required infrastructure.
 

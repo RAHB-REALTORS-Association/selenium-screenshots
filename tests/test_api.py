@@ -28,7 +28,7 @@ class ApiTests(unittest.TestCase):
 
     def test_aliases_and_formats(self):
         headers = {'Authorization': 'Bearer test-token'}
-        with patch('app.capture', return_value=b'image') as capture:
+        with patch('capture_runner.run_capture', return_value=b'image') as capture:
             for route in ('/screenshot', '/api/capture'):
                 for fmt, mime in (('PNG', 'image/png'), ('JPG', 'image/jpeg')):
                     response = self.client.get(route, query_string={'url': 'https://example.com', 'format': fmt}, headers=headers)
@@ -36,6 +36,34 @@ class ApiTests(unittest.TestCase):
                     self.assertEqual(response.content_type, mime)
                     self.assertEqual(response.data, b'image')
             self.assertEqual(capture.call_count, 4)
+
+    def test_private_targets_are_explicit_and_still_exclude_metadata(self):
+        headers = {'Authorization': 'Bearer test-token'}
+        with patch.dict(os.environ, {'ALLOW_PRIVATE_TARGETS': 'true'}), patch('capture_runner.run_capture', return_value=b'image'):
+            self.assertEqual(self.client.get('/screenshot?url=http://10.0.0.1', headers=headers).status_code, 200)
+            for url in ('http://127.0.0.1', 'http://169.254.169.254', 'http://[::1]'):
+                self.assertEqual(self.client.get('/screenshot', query_string={'url': url}, headers=headers).status_code, 400)
+        with patch.dict(os.environ, {'ALLOW_PRIVATE_TARGETS': 'typo'}):
+            self.assertEqual(self.client.get('/health').status_code, 503)
+
+    def test_full_capacity_returns_retry_and_failure_releases_slot(self):
+        from app import capture_slots
+        headers = {'Authorization': 'Bearer test-token'}
+        capture_slots.acquire()
+        capture_slots.acquire()
+        try:
+            response = self.client.get('/screenshot?url=https://example.com', headers=headers)
+            self.assertEqual(response.status_code, 503)
+            self.assertEqual(response.headers['Retry-After'], '5')
+        finally:
+            capture_slots.release()
+            capture_slots.release()
+        with patch('capture_runner.run_capture', side_effect=RuntimeError('test')):
+            self.assertEqual(self.client.get('/screenshot?url=https://example.com', headers=headers).status_code, 502)
+        self.assertTrue(capture_slots.acquire(block=False))
+        self.assertTrue(capture_slots.acquire(block=False))
+        capture_slots.release()
+        capture_slots.release()
 
 if __name__ == '__main__':
     unittest.main()

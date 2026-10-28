@@ -3,6 +3,7 @@ import hmac
 import ipaddress
 import os
 import re
+from multiprocessing import BoundedSemaphore
 from urllib.parse import urlsplit
 
 from flask import Flask, Response, abort, request, jsonify
@@ -14,18 +15,27 @@ from selenium.webdriver.chrome.service import Service
 from rendering import RenderError, wait_for_render
 
 app = Flask(__name__)
+capture_slots = BoundedSemaphore(2)  # Shared across Gunicorn's preloaded workers.
 CORS(app, origins=os.environ.get('ALLOWED_ORIGINS', 'https://screenshots.oncornerstone.app').split(','))
 
 
 def settings():
     token = os.environ.get('BEARER_TOKEN', '')
     proxy = os.environ.get('SCREENSHOT_PROXY', '')
+    private_targets_allowed()
     if not token or not proxy:
         raise RuntimeError('BEARER_TOKEN and SCREENSHOT_PROXY must be configured')
     parsed = urlsplit(proxy)
     if parsed.scheme != 'http' or not parsed.hostname or not parsed.port or parsed.username or parsed.password or parsed.path not in ('', '/') or parsed.query or parsed.fragment:
         raise RuntimeError('SCREENSHOT_PROXY must be an http proxy URL with a host and port')
     return token, proxy
+
+
+def private_targets_allowed():
+    value = os.environ.get('ALLOW_PRIVATE_TARGETS', 'false').lower()
+    if value not in ('true', 'false'):
+        raise RuntimeError('ALLOW_PRIVATE_TARGETS must be true or false')
+    return value == 'true'
 
 
 def capture(url, width, height, image_format, delay, fullpage, proxy):
@@ -68,6 +78,15 @@ def http_error(error):
     return jsonify(message=error.description, error=error.name), error.code
 
 
+@app.get('/health')
+def health():
+    try:
+        settings()
+    except (RuntimeError, ValueError):
+        return jsonify(status='unavailable'), 503
+    return jsonify(status='ok')
+
+
 @app.get('/screenshot')
 @app.get('/api/capture')
 def screenshot():
@@ -87,7 +106,9 @@ def screenshot():
             address = ipaddress.ip_address(parsed.hostname)
         except ValueError:
             address = None  # The egress proxy resolves and filters hostnames.
-        if address is not None and not address.is_global:
+        internal = address is not None and address.version == 4 and any(address in network for network in (
+            ipaddress.ip_network('10.0.0.0/8'), ipaddress.ip_network('172.16.0.0/12'), ipaddress.ip_network('192.168.0.0/16')))
+        if address is not None and not address.is_global and not (private_targets_allowed() and internal):
             raise ValueError()
     except ValueError:
         abort(400, 'Invalid URL')
@@ -106,8 +127,11 @@ def screenshot():
     fullpage = request.args.get('fullpage', '0')
     if fullpage not in ('0', '1'):
         abort(400, 'Invalid fullpage')
+    if not capture_slots.acquire(block=False):
+        return jsonify(message='Capture capacity is full; retry shortly', error='Service Unavailable'), 503, {'Retry-After': '5'}
     try:
-        data = capture(url, width, height, image_format, int(delay_text), fullpage == '1', proxy)
+        from capture_runner import run_capture
+        data = run_capture(url, width, height, image_format, int(delay_text), fullpage == '1', proxy)
     except RenderError as exc:
         abort(502, str(exc))
     except Exception as exc:
@@ -115,6 +139,8 @@ def screenshot():
             raise
         app.logger.exception('Capture failed')
         abort(502, 'Capture failed')
+    finally:
+        capture_slots.release()
     mime = 'image/jpeg' if image_format == 'JPG' else 'image/png'
     return Response(data, content_type=mime, headers={'Content-Disposition': f'attachment; filename="screenshot.{image_format.lower()}"', 'Cache-Control': 'no-store'})
 

@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const scrollToTopButton = document.getElementById("scrollToTopButton");
 
     // Constants for storage values
-    const storedApiUrl = localStorage.getItem("apiUrl") || sessionStorage.getItem("apiUrl");
+    const storedApiUrl = localStorage.getItem("apiUrl") || sessionStorage.getItem("apiUrl") || 'https://screenshot-api.oncornerstone.app';
     const storedApiKey = localStorage.getItem("apiKey") || sessionStorage.getItem("apiKey");
 
     // Initially disable the saveButton

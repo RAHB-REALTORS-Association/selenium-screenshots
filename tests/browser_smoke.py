@@ -2,7 +2,7 @@
 import struct
 from pathlib import Path
 from urllib.parse import quote
-from app import capture
+from capture_runner import run_capture as capture
 
 def png_rgb(data, pixel_x=10, pixel_y=10):
     import zlib
