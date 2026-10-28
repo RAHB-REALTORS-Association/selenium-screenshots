@@ -42,3 +42,12 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Proxy.Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: ghcr.io/rahb-realtors-association/selenium-screenshots:proxy-staging
+          cache-from: type=gha,scope=proxy
+          cache-to: type=gha,mode=max,scope=proxy
