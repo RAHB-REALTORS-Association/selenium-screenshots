@@ -24,9 +24,13 @@ COPY --from=driver /driver/chromedriver-linux64/chromedriver /usr/bin/chromedriv
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY app.py rendering.py capture_runner.py capture_worker.py gunicorn_config.py ./
-RUN useradd --create-home --uid 10001 screenshot
+COPY app.py rendering.py capture_runner.py capture_worker.py gunicorn_config.py socket_proxy.py container_entrypoint.py ./
+RUN useradd --create-home --uid 10001 screenshot \
+    && mkdir -p /run/capture \
+    && chown screenshot:screenshot /run/capture \
+    && chmod 2770 /run/capture
 USER screenshot
 ENV CHROME_BIN=/usr/bin/brave-browser CHROMEDRIVER_BIN=/usr/bin/chromedriver BROWSER_SOFTWARE_HEVC=1
 EXPOSE 8080
+ENTRYPOINT ["python", "/app/container_entrypoint.py"]
 CMD ["gunicorn", "--config", "./gunicorn_config.py", "app:app"]

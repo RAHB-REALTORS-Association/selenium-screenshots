@@ -69,6 +69,10 @@ jobs:
           cache-to: type=gha,mode=max,scope=proxy
       - name: Verify proxy destination policy
         run: sh tests/proxy_smoke.sh
+      - name: Build gateway and verify the Compose stack
+        run: |
+          docker build -f deploy/Gateway.Dockerfile -t screenshot-gateway:ci .
+          python tests/stack_smoke.py
       - name: Publish the exact tested images
         env:
           RELEASE_IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
@@ -83,4 +87,9 @@ jobs:
             proxy_image="ghcr.io/rahb-realtors-association/selenium-screenshots:$proxy_tag"
             docker tag screenshot-proxy:ci "$proxy_image"
             docker push "$proxy_image"
+          done
+          for gateway_tag in "gateway-$RELEASE_TAG" gateway-latest; do
+            gateway_image="ghcr.io/rahb-realtors-association/selenium-screenshots:$gateway_tag"
+            docker tag screenshot-gateway:ci "$gateway_image"
+            docker push "$gateway_image"
           done

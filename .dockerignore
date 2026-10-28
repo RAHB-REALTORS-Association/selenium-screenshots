@@ -15,3 +15,5 @@ __pycache__/
 security_best_practices_report.md
 
 test-results/
+.env
+.env.*

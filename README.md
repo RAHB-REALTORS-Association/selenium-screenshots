@@ -11,7 +11,7 @@ A Flask API that captures websites using Selenium and a Chromium browser. Both `
 
 Two captures can run at once across the preloaded Gunicorn workers. Extra requests receive HTTP 503 with `Retry-After: 5`; callers should retry with backoff. Captures run in separate processes with a 55-second deadline, and their process groups are terminated on completion, error or timeout. The browser process environment excludes the API bearer token and deployment credentials. `GET /health` returns 200 only when required configuration is valid.
 
-**The proxy is a security boundary.** It must resolve destinations itself and reject loopback, private, link-local, reserved and metadata addresses, including IPv6, redirects, DNS rebinding and subresources. The container's network must prevent Chrome from bypassing that proxy, including direct DNS, TCP and UDP traffic. The application does not provide this proxy or enforce network policy. Do not expose the service until these controls are deployed and verified. Allow the service to reach only the proxy and required infrastructure.
+**The proxy is a security boundary.** The recommended `compose.yaml` bundles an ingress gateway, the API/browser and a filtering proxy. The API uses `network_mode: none`: ingress and proxy traffic cross Unix sockets on dedicated volumes, so the browser cannot bypass the proxy through another container network. Coolify can manage its normal networks without attaching the capture container. For standalone image deployments, provide equivalent proxy and network controls yourself. See [deployment instructions](deploy/README.md).
 
 ## API
 
@@ -47,4 +47,4 @@ CI verifies decoded pixels from a generated HEVC fixture inside the actual serve
 
 ### Releases
 
-Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser and proxy-policy checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.6.0`, `1.6.0`, `1.6` and `latest`; proxy tags include `proxy-v1.6.0` and `proxy-latest`. Pin the versioned API and proxy tags in Coolify and deploy through its normal health-checked rollout. Release publication does not invoke the legacy deployment webhook.
+Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser, proxy-policy and full Compose stack checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.6.1`, `1.6.1`, `1.6` and `latest`; proxy tags include `proxy-v1.6.1` and `proxy-latest`; gateway tags include `gateway-v1.6.1` and `gateway-latest`. The Compose file pins matching versioned images. Release publication does not invoke the legacy deployment webhook.

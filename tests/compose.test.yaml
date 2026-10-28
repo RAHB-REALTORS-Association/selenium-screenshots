@@ -1,0 +1,8 @@
+services:
+  gateway:
+    ports: ['127.0.0.1::8080']
+  fixture:
+    image: screenshot-api:ci
+    entrypoint: [python, -m, http.server, '80', --directory, /fixtures]
+    volumes:
+      - ./tests/fixtures:/fixtures:ro
