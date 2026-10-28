@@ -1,97 +1,32 @@
-# Stage 1: Build
-FROM python:3.11-slim-bullseye as builder
+FROM python:3.11-slim-bookworm AS driver
+ARG CHROMEDRIVER_VERSION=156.0.8078.74
+ARG CHROMEDRIVER_SHA256=308f87940ec84d9adfd6079a71ddfc864fbeab102125d6726f6ae5da4fbfaf45
+RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-certificates \
+    && curl -fsSL --max-time 120 "https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip" -o /tmp/driver.zip \
+    && echo "${CHROMEDRIVER_SHA256}  /tmp/driver.zip" | sha256sum -c - \
+    && unzip -q /tmp/driver.zip -d /driver
 
-# Install dependencies required for building the application
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget \
-    unzip \
-    apt-utils \
-    curl \
-    jq
-
-# Fetch and install the latest stable ChromeDriver
-RUN set -ex; \
-    JSON_URL="https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"; \
-    LATEST_STABLE=$(curl -s $JSON_URL | jq -r '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64").url'); \
-    if [ -n "$LATEST_STABLE" ] && [ "$LATEST_STABLE" != "null" ]; then \
-        echo "Downloading ChromeDriver from: $LATEST_STABLE"; \
-        wget "$LATEST_STABLE" -O chromedriver_linux64.zip && \
-        unzip chromedriver_linux64.zip && \
-        mv chromedriver-linux64/chromedriver /usr/bin/ && \
-        chmod +x /usr/bin/chromedriver && \
-        rm -rf chromedriver_linux64.zip chromedriver-linux64; \
-    else \
-        echo "Failed to resolve the latest stable ChromeDriver URL." >&2; \
-        exit 1; \
-    fi
-
-# Clean up unnecessary packages and files to reduce image size
-RUN apt-get remove --purge -y wget unzip apt-utils curl jq && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Stage 2: Runtime
-FROM python:3.11-slim-bullseye
-
-# Copy the ChromeDriver binary from the builder stage
-COPY --from=builder /usr/bin/chromedriver /usr/bin/chromedriver
-
-# Install Chrome
-RUN apt-get update && apt-get install -y wget apt-transport-https apt-utils \
-    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install \
-    && rm -rf /var/lib/apt/lists/* google-chrome-stable_current_amd64.deb
-
-# Install runtime dependencies (fonts and minimal utilities)
-RUN echo "deb http://deb.debian.org/debian bullseye contrib" >> /etc/apt/sources.list && \
-    apt-get update && apt-get install -y --no-install-recommends \
-    fonts-roboto \
-    fonts-noto \
-    fontconfig \
-    xfonts-utils \
-    ttf-mscorefonts-installer && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install Noto Color Emoji font and configure fontconfig
-RUN wget https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf -O /usr/share/fonts/NotoColorEmoji.ttf && \
-    fc-cache -f -v && \
-    echo '<?xml version="1.0"?>\n\
-<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">\n\
-<fontconfig>\n\
-    <alias>\n\
-        <family>sans-serif</family>\n\
-        <prefer>\n\
-            <family>Noto Color Emoji</family>\n\
-        </prefer>\n\
-    </alias>\n\
-    <alias>\n\
-        <family>serif</family>\n\
-        <prefer>\n\
-            <family>Noto Color Emoji</family>\n\
-        </prefer>\n\
-    </alias>\n\
-    <alias>\n\
-        <family>monospace</family>\n\
-        <prefer>\n\
-            <family>Noto Color Emoji</family>\n\
-        </prefer>\n\
-    </alias>\n\
-</fontconfig>' > /etc/fonts/local.conf
-
-# Set the working directory
+FROM python:3.11-slim-bookworm
+ARG TARGETARCH
+ARG BRAVE_VERSION=1.98.62
+# This Chromium-based runtime includes an opt-in software HEVC decoder on Linux.
+# Keep its Chromium version aligned with the pinned ChromeDriver above.
+RUN test "$TARGETARCH" = amd64 \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        curl ca-certificates fonts-roboto fonts-noto fonts-noto-color-emoji fontconfig \
+    && curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg --max-time 30 \
+        https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
+    && curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources --max-time 30 \
+        https://brave-browser-apt-release.s3.brave.com/brave-browser.sources \
+    && apt-get update && apt-get install -y --no-install-recommends "brave-browser=${BRAVE_VERSION}" \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=driver /driver/chromedriver-linux64/chromedriver /usr/bin/chromedriver
 WORKDIR /app
-
-# Install Python dependencies
-#COPY --from=builder /root/.cache /root/.cache
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && \
-    rm -rf /root/.cache
-
-# Copy the application
-COPY . .
-
-# Expose port 8080
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app.py rendering.py capture_runner.py capture_worker.py gunicorn_config.py ./
+RUN useradd --create-home --uid 10001 screenshot
+USER screenshot
+ENV CHROME_BIN=/usr/bin/brave-browser CHROMEDRIVER_BIN=/usr/bin/chromedriver BROWSER_SOFTWARE_HEVC=1
 EXPOSE 8080
-
 CMD ["gunicorn", "--config", "./gunicorn_config.py", "app:app"]
