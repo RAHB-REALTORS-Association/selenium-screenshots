@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = 'selenium-screenshots-v3';
+const CACHE_NAME = 'selenium-screenshots-v4';
 const urlsToCache = [
   './',
   'style.css?v=202310221921',
@@ -11,11 +11,7 @@ const urlsToCache = [
   'apple-touch-icon-180x180.png',
   'android-chrome-192x192.png',
   'android-chrome-512x512.png',
-  'selenium-screenshots.png',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js',
-  'https://cdn.jsdelivr.net/npm/axios@1.5.1/dist/axios.min.js'
+  'selenium-screenshots.png'
 ];
 
 self.addEventListener('install', function(event) {
@@ -25,10 +21,17 @@ self.addEventListener('install', function(event) {
                 console.log('Opened cache');
                 return cache.addAll(urlsToCache);
             })
+            .then(() => self.skipWaiting())
     );
 });
 
 self.addEventListener('fetch', function(event) {
+    // API requests carry credentials and must never enter this cache.
+    if (event.request.method !== 'GET' || event.request.headers.has('Authorization') || new URL(event.request.url).origin !== self.location.origin) return;
+    if (event.request.mode === 'navigate' || ['script', 'style'].includes(event.request.destination)) {
+        event.respondWith(fetch(event.request).catch(() => caches.match(event.request.mode === 'navigate' ? './' : event.request)));
+        return;
+    }
     event.respondWith(
         caches.match(event.request)
             .then(function(response) {
@@ -51,6 +54,6 @@ self.addEventListener('activate', function(event) {
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim())
     );
 });

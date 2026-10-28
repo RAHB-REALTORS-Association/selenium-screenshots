@@ -18,3 +18,36 @@ test('non-JSON proxy failures preserve the status', async () => {
 test('network errors identify connectivity and CORS', async () => {
   assert.match(await context.screenshotErrorMessage({}), /network, and CORS/);
 });
+
+function serviceWorker(overrides = {}) {
+  const handlers = {};
+  const worker = {
+    self: {location: {origin: 'https://screenshots.example'}, addEventListener: (name, fn) => handlers[name] = fn},
+    URL, console, ...overrides
+  };
+  vm.runInNewContext(fs.readFileSync('docs/service-worker.js', 'utf8'), worker);
+  return {handlers, worker};
+}
+test('service worker gets fresh pages/scripts/styles and falls back only while offline', async () => {
+  let offline = false;
+  const {handlers} = serviceWorker({
+    fetch: async () => { if (offline) throw Error('offline'); return 'fresh page'; },
+    caches: {match: async () => 'offline page'}
+  });
+  for (const destination of ['document', 'script', 'style']) {
+    const request = {method: 'GET', mode: destination === 'document' ? 'navigate' : 'cors', destination, url: 'https://screenshots.example/', headers: new Headers()};
+    let response;
+    offline = false;
+    handlers.fetch({request, respondWith: value => response = value});
+    assert.equal(await response, 'fresh page');
+    offline = true;
+    handlers.fetch({request, respondWith: value => response = value});
+    assert.equal(await response, 'offline page');
+  }
+});
+test('service worker leaves credentialed and cross-origin requests alone', () => {
+  const {handlers} = serviceWorker();
+  const intercept = () => assert.fail('Sensitive request intercepted by cache');
+  handlers.fetch({request: {method: 'GET', url: 'https://api.example/screenshot', headers: new Headers()}, respondWith: intercept});
+  handlers.fetch({request: {method: 'GET', url: 'https://screenshots.example/screenshot', headers: new Headers({Authorization: 'Bearer test'})}, respondWith: intercept});
+});
