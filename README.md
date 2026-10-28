@@ -44,3 +44,7 @@ Capture readiness waits for visible image decoding, fonts and video data, then s
 The amd64 server image uses Brave 1.98.62 (Chromium 156.0.8078.74) with its opt-in FFmpeg software HEVC decoder. This avoids blank HEVC video on a server without a hardware decoder. ChromeDriver is pinned to the matching Chromium version and its download SHA256 is verified. Local macOS testing can continue to use installed Chrome. Update the two pinned browser/driver versions together when rebuilding for browser security updates.
 
 CI verifies decoded pixels from a generated HEVC fixture inside the actual server image. Visible video failures without a poster produce a 502 error instead of a silently incomplete screenshot.
+
+### Releases
+
+Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser and proxy-policy checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.6.0`, `1.6.0`, `1.6` and `latest`; proxy tags include `proxy-v1.6.0` and `proxy-latest`. Pin the versioned API and proxy tags in Coolify and deploy through its normal health-checked rollout. Release publication does not invoke the legacy deployment webhook.
