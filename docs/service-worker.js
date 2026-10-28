@@ -28,8 +28,8 @@ self.addEventListener('install', function(event) {
 self.addEventListener('fetch', function(event) {
     // API requests carry credentials and must never enter this cache.
     if (event.request.method !== 'GET' || event.request.headers.has('Authorization') || new URL(event.request.url).origin !== self.location.origin) return;
-    if (event.request.mode === 'navigate') {
-        event.respondWith(fetch(event.request).catch(() => caches.match('./')));
+    if (event.request.mode === 'navigate' || ['script', 'style'].includes(event.request.destination)) {
+        event.respondWith(fetch(event.request).catch(() => caches.match(event.request.mode === 'navigate' ? './' : event.request)));
         return;
     }
     event.respondWith(

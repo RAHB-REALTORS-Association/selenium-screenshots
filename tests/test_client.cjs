@@ -28,19 +28,22 @@ function serviceWorker(overrides = {}) {
   vm.runInNewContext(fs.readFileSync('docs/service-worker.js', 'utf8'), worker);
   return {handlers, worker};
 }
-test('service worker gets fresh navigation and falls back only while offline', async () => {
+test('service worker gets fresh pages/scripts/styles and falls back only while offline', async () => {
   let offline = false;
   const {handlers} = serviceWorker({
     fetch: async () => { if (offline) throw Error('offline'); return 'fresh page'; },
     caches: {match: async () => 'offline page'}
   });
-  const request = {method: 'GET', mode: 'navigate', url: 'https://screenshots.example/', headers: new Headers()};
-  let response;
-  handlers.fetch({request, respondWith: value => response = value});
-  assert.equal(await response, 'fresh page');
-  offline = true;
-  handlers.fetch({request, respondWith: value => response = value});
-  assert.equal(await response, 'offline page');
+  for (const destination of ['document', 'script', 'style']) {
+    const request = {method: 'GET', mode: destination === 'document' ? 'navigate' : 'cors', destination, url: 'https://screenshots.example/', headers: new Headers()};
+    let response;
+    offline = false;
+    handlers.fetch({request, respondWith: value => response = value});
+    assert.equal(await response, 'fresh page');
+    offline = true;
+    handlers.fetch({request, respondWith: value => response = value});
+    assert.equal(await response, 'offline page');
+  }
 });
 test('service worker leaves credentialed and cross-origin requests alone', () => {
   const {handlers} = serviceWorker();
