@@ -40,6 +40,8 @@ jobs:
           context: .
           load: true
           tags: screenshot-api:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Verify real browser rendering before publishing
         run: |
           mkdir -p test-results

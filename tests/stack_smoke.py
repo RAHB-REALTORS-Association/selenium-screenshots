@@ -60,9 +60,21 @@ print('Filtering proxy denies private hostnames and metadata over the Unix relay
     run('up', '-d', '--wait', '--wait-timeout', '120')
     parameters = urlencode({'url': 'http://fixture/capture.html', 'viewport': '800x600'})
     request = Request(base + '/screenshot?' + parameters, headers={'Authorization': 'Bearer stack-test-token'})
-    with urlopen(request, timeout=60) as response:
-        assert response.headers['Content-Type'] == 'image/png'
-        data = response.read()
+    try:
+        with urlopen(request, timeout=60) as response:
+            assert response.headers['Content-Type'] == 'image/png'
+            data = response.read()
+    except HTTPError as error:
+        print('Capture response:', error.code, error.read().decode(), flush=True)
+        run('exec', '-T', 'api', 'python', '-c', '''
+import sys
+from unittest.mock import patch
+from selenium.webdriver.chrome.service import Service
+from app import capture
+with patch('app.Service', side_effect=lambda *args, **kwargs: Service(*args, **kwargs, log_output=sys.stderr)):
+    capture('http://fixture/capture.html', 800, 600, 'PNG', 0, False, 'http://127.0.0.1:3128')
+''')
+        raise
     assert data.startswith(b'\x89PNG\r\n\x1a\n')
     r, g, b = png_rgb(data)
     assert g > 90 and r < 40 and b < 80, f'HEVC pixels missing through the stack: {r,g,b}'
