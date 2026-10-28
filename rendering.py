@@ -4,6 +4,11 @@ import time
 
 # Includes decoding and visual settling; navigation has a separate 25s timeout.
 RENDER_BUDGET = 12
+
+
+class RenderError(RuntimeError):
+    """Visible page media could not be rendered."""
+
 ASSET_READINESS = r"""
 const done = arguments[arguments.length - 1];
 const visible = el => {
@@ -25,7 +30,10 @@ let finished = false;
 const finish = () => {
   if (finished) return;
   finished = true;
-  done({animated: media.length > 0 || [...document.querySelectorAll('canvas')].some(visible)});
+  done({
+    animated: media.length > 0 || [...document.querySelectorAll('canvas')].some(visible),
+    mediaErrors: media.filter(v => v.error && !v.poster).map(v => v.error.code)
+  });
 };
 const timer = setTimeout(finish, 4000);
 Promise.allSettled(waits).then(() => { clearTimeout(timer); finish(); });
@@ -42,6 +50,8 @@ def wait_for_render(driver):
     started = time.monotonic()
     deadline = started + RENDER_BUDGET
     state = driver.execute_async_script(ASSET_READINESS)
+    if state.get('mediaErrors'):
+        raise RenderError('Visible video could not be decoded or loaded by the capture browser')
     minimum = 8 if state.get('animated') else 2
     previous = None
     stable_since = time.monotonic()

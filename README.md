@@ -1,6 +1,6 @@
 # Screenshot API
 
-A Flask API that captures websites using Chrome. Both `GET /screenshot` and `GET /api/capture` accept a bearer token and return an image.
+A Flask API that captures websites using Selenium and a Chromium browser. Both `GET /screenshot` and `GET /api/capture` accept a bearer token and return an image.
 
 ## Required configuration
 
@@ -35,3 +35,9 @@ PYTHONPATH=. SE_AVOID_STATS=true .venv/bin/python tests/browser_smoke.py
 The browser smoke uses an embedded fixture, so it does not require an outbound proxy or contact a target website. It verifies PNG/JPEG signatures, an exact 800×600 viewport, and an 800×1800 full-page capture; images are saved under `test-results/`. Serving real HTTP(S) captures still requires the configured filtering proxy.
 
 Capture readiness waits for visible image decoding, fonts and video data, then samples rendered pixels until stable. Static pages settle quickly; video/canvas introductions get at least eight seconds, with a twelve-second render budget so continuous animation cannot hang a request. The requested delay is additional. Animated pages can still differ by frame; the service does not rewrite their animation state.
+
+### Linux video support
+
+The amd64 server image uses Brave 1.98.62 (Chromium 156.0.8078.74) with its opt-in FFmpeg software HEVC decoder. This avoids blank HEVC video on a server without a hardware decoder. ChromeDriver is pinned to the matching Chromium version and its download SHA256 is verified. Local macOS testing can continue to use installed Chrome. Update the two pinned browser/driver versions together when rebuilding for browser security updates.
+
+CI verifies decoded pixels from a generated HEVC fixture inside the actual server image. Visible video failures without a poster produce a 502 error instead of a silently incomplete screenshot.

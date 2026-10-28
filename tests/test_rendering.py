@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from rendering import wait_for_render
+from rendering import RenderError, wait_for_render
 
 
 class Clock:
@@ -48,3 +48,10 @@ class RenderTests(unittest.TestCase):
         with patch('rendering.time', clock):
             wait_for_render(Driver(animated=True, changing=True))
         self.assertEqual(clock.now, 12)
+
+    def test_unsupported_visible_media_is_not_a_successful_capture(self):
+        driver = Driver()
+        driver.execute_async_script = lambda script: {'animated': True, 'mediaErrors': [4]}
+        with self.assertRaisesRegex(RenderError, 'video'):
+            wait_for_render(driver)
+        self.assertEqual(driver.frames, 0)

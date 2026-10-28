@@ -11,7 +11,7 @@ from flask_cors import CORS
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from rendering import wait_for_render
+from rendering import RenderError, wait_for_render
 
 app = Flask(__name__)
 CORS(app, origins=os.environ.get('ALLOWED_ORIGINS', 'https://screenshots.oncornerstone.app').split(','))
@@ -34,6 +34,8 @@ def capture(url, width, height, image_format, delay, fullpage, proxy):
                      '--disable-quic', f'--proxy-server={proxy}',
                      '--proxy-bypass-list=<-loopback>', f'--window-size={width},{height}'):
         options.add_argument(argument)
+    if os.environ.get('BROWSER_SOFTWARE_HEVC') == '1':
+        options.add_argument('--enable-features=FFmpegSoftwareHEVCDecoder')
     if os.environ.get('CHROME_BIN'):
         options.binary_location = os.environ['CHROME_BIN']
     # Selenium Manager discovers local Chrome and a matching driver on macOS.
@@ -106,6 +108,8 @@ def screenshot():
         abort(400, 'Invalid fullpage')
     try:
         data = capture(url, width, height, image_format, int(delay_text), fullpage == '1', proxy)
+    except RenderError as exc:
+        abort(502, str(exc))
     except Exception as exc:
         if isinstance(exc, HTTPException):
             raise
