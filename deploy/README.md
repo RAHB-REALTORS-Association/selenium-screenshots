@@ -14,9 +14,10 @@ Socket volumes contain runtime sockets, not business data. API and proxy image d
 
 1. Create an Application from this private GitHub repository using the existing Git integration. Select `master` and the Docker Compose build strategy.
 2. Set Base Directory to `/` and Docker Compose Location to `/compose.yaml`. Enable **Preserve repository during deployment** so the sandbox profile remains available. Keep normal managed Compose deployment; the file requires no raw-mode proxy labels or predefined-network connection.
-3. Load the Compose definition. Set the required `BEARER_TOKEN` in Environment Variables. `ALLOW_PRIVATE_TARGETS` defaults to `false` and `ALLOWED_ORIGINS` defaults to the public GitHub Pages client. No credential belongs in Git.
-4. Configure the public domain on `gateway`, internal port 8080. Do not assign public domains or host ports to `api` or `proxy`.
-5. Deploy and verify all three health checks. Inspect Deployable Compose and confirm `api` still has `network_mode: none`, no networks and no published ports. Verify a real authenticated capture through the gateway.
+3. Load the Compose definition. Set the required `BEARER_TOKEN` in Environment Variables, available at runtime only and treated as a literal value. `ALLOW_PRIVATE_TARGETS` defaults to `false` and `ALLOWED_ORIGINS` defaults to the public GitHub Pages client. No credential belongs in Git.
+4. These images are prebuilt. Set **Custom build command** to `BEARER_TOKEN=build-validation-only docker compose pull`. Compose validates required runtime variables even for an image pull; this non-secret placeholder is scoped to that command. The start phase uses the real runtime token. Keep automatic deployments manual until the matching release images are published.
+5. Configure the public domain on `gateway`, internal port 8080. Do not assign public domains or host ports to `api` or `proxy`.
+6. Deploy and verify all three health checks. Inspect Deployable Compose and confirm `api` still has `network_mode: none`, no networks and no published ports. Verify a real authenticated capture through the gateway.
 
 For a preview, override `API_IMAGE`, `PROXY_IMAGE` and `GATEWAY_IMAGE` with the corresponding immutable preview tags. For a release, the defaults in `compose.yaml` select matching versioned images.
 
@@ -26,7 +27,7 @@ For a preview, override `API_IMAGE`, `PROXY_IMAGE` and `GATEWAY_IMAGE` with the 
 
 ## Migration and rollback
 
-Deploy the new Compose application on a temporary verification domain first. Once health, authentication, private-target filtering and visual capture pass, transfer the existing API domain to `gateway` using its existing protocol choice. Verify the public client, then stop the prior API and proxy resources. Retain them for rollback; there is no persistent application data to migrate. A rollback transfers the domain back and starts the previous resources.
+Validate the stack in CI, then transfer the existing API domain to `gateway` using its existing protocol choice. Verify health, authentication and a visual capture through the public client before stopping the prior API and proxy resources. Retain them for rollback; there is no persistent application data to migrate. A rollback transfers the domain back and starts the previous resources.
 
 ## Local verification
 
