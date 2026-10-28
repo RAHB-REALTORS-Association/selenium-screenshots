@@ -48,10 +48,16 @@ paths:
           type: string
       - name: delay
         in: query
-        description: The delay before the screenshot is taken to allow the page to
-          load. Default is '0'. Useful for ensuring that dynamic content has loaded.
+        description: Delay in seconds before capture, from 0 to 10. Defaults to 0.
         schema:
           type: integer
+      - name: fullpage
+        in: query
+        description: Set to 1 for a full-page capture, limited to 16 million pixels and 10000 pixels per dimension.
+        schema:
+          type: integer
+          enum: [0, 1]
+          default: 0
       responses:
         '200':
           description: Screenshot successfully taken. Returns the captured image in
@@ -61,7 +67,11 @@ paths:
             image/jpeg: {}
         '401':
           description: Unauthorized. The API authentication token is missing or invalid.
-        '500':
+        '400':
+          description: Invalid capture parameters.
+        '503':
+          description: Service configuration is invalid.
+        '502':
           description: Internal Server Error. An error occurred while taking the screenshot.
 components:
   securitySchemes:

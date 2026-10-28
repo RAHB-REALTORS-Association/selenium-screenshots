@@ -166,6 +166,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Function to handle the settings save
     document.querySelector("#apiSettingsModal .btn-primary").addEventListener("click", function(e) {
+        localStorage.removeItem("apiUrl");
+        localStorage.removeItem("apiKey");
+        sessionStorage.removeItem("apiUrl");
+        sessionStorage.removeItem("apiKey");
         if (document.querySelector("#saveSettingsCheckbox").checked) {
             localStorage.setItem("apiUrl", apiUrlInput.value);
             localStorage.setItem("apiKey", apiKeyInput.value);

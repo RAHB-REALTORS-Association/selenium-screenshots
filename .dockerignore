@@ -8,3 +8,8 @@ CONTRIBUTING.md
 Dockerfile
 README.md
 SECURITY.md
+.venv/
+venv/
+__pycache__/
+*.pyc
+security_best_practices_report.md

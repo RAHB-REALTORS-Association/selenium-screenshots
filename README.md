@@ -1,127 +1,35 @@
-[![Continuous Integration](https://github.com/RAHB-REALTORS-Association/selenium-screenshots/actions/workflows/python-app.yml/badge.svg)](https://github.com/RAHB-REALTORS-Association/selenium-screenshots/actions/workflows/python-app.yml)
-[![Docker Image](https://github.com/RAHB-REALTORS-Association/selenium-screenshots/actions/workflows/docker-image.yml/badge.svg)](https://github.com/RAHB-REALTORS-Association/selenium-screenshots/actions/workflows/docker-image.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# Screenshot API
 
-# 📸 Selenium Screenshots API 🌐
+A Flask API that captures websites using Chrome. Both `GET /screenshot` and `GET /api/capture` accept a bearer token and return an image.
 
-This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.
+## Required configuration
 
-## Table of Contents
-- [✅ Requirements](#-requirements)
-- [🛠️ Configuration](#%EF%B8%8F-configuration)
-- [🧑‍💻 Usage](#-usage)
-- [📚 API Documentation](#-api-documentation)
-- [🐳 Running with Docker](#-running-with-docker)
-- [🌐 Community](#-community)
-  - [Contributing 👥](#contributing-)
-  - [Reporting Bugs 🐛](#reporting-bugs-)
-- [📄 License](#-license)
+- `BEARER_TOKEN`: API token. Requests fail closed if it is missing.
+- `SCREENSHOT_PROXY`: HTTP proxy URL, for example `http://egress-proxy:3128`.
+- `ALLOWED_ORIGINS`: comma-separated allowed web client origins.
 
-## ✅ Requirements
+**The proxy is a security boundary.** It must resolve destinations itself and reject loopback, private, link-local, reserved and metadata addresses, including IPv6, redirects, DNS rebinding and subresources. The container's network must prevent Chrome from bypassing that proxy, including direct DNS, TCP and UDP traffic. The application does not provide this proxy or enforce network policy. Do not expose the service until these controls are deployed and verified. Allow the service to reach only the proxy and required infrastructure.
 
-Python:
-- Flask
-- Flask_CORS
-- Flask-RESTful
-- Gunicorn
-- Selenium
-- URLlib3
-- Werkzeug
+## API
 
-Other:
-- Google Chrome
-- ChromeDriver (required for headless operation)
-
-Install the required Python packages with pip:
-
-```bash
-pip install -r requirements.txt
+```
+GET /screenshot?url=https%3A%2F%2Fexample.com&viewport=1440x900&format=PNG&delay=0&fullpage=0
+Authorization: Bearer <token>
 ```
 
->Note: You will also need ChromeDriver installed for headless operation on servers.
+`url` must be HTTP or HTTPS. `viewport` defaults to 1440x900 and is limited to 16 million pixels. `format` is PNG or JPG. `delay` is 0–10 seconds. `fullpage=1` captures the page within the 16 million pixel and 10,000 pixel dimension limits. Responses contain image bytes with the corresponding MIME type. Internal destinations are not supported by the recommended proxy policy.
 
-## 🛠️ Configuration
-You can configure the API through environment variables such as setting the Flask secret key and the bearer token for authentication. The required environment variables are:
+## Run and test
 
-- `BEARER_TOKEN`: The token for bearer authentication.
-- `ALLOWED_ORIGINS`: A comma-separated list of domains that are allowed to make cross-origin requests (CORS) to the API.
+Install `requirements.txt` in a virtual environment, configure both required variables and run `gunicorn --config gunicorn_config.py app:app`. Run `python -m unittest discover -s tests -v` for the API contract tests. The Docker image listens on port 8080; configure its network and proxy before exposing it. Chrome sandbox support must be enabled in the container runtime.
 
-## 🧑‍💻 Usage
-To start the Flask development server:
+### Local Chrome verification (macOS)
 
-```bash
-export ALLOWED_ORIGINS=*
-python app.py
+The service can use installed Chrome through Selenium Manager; no Docker is needed. Omit `CHROME_BIN` and `CHROMEDRIVER_BIN` to use automatic discovery, or set them explicitly. Selenium creates a temporary browser profile, rather than attaching to your personal Chrome session.
+
+```
+.venv/bin/python -m pip install -r requirements.txt
+PYTHONPATH=. SE_AVOID_STATS=true .venv/bin/python tests/browser_smoke.py
 ```
 
-To run in production:
-```bash
-export BEARER_TOKEN=your_api_authentication_token
-export ALLOWED_ORIGINS=https://example.com
-python -m gunicorn --config ./gunicorn_config.py app:app
-```
-
-## 📚 API Documentation
-
-Please refer to our comprehensive **[API documentation](https://screenshots.oncornerstoner.app/api/)** for detailed information about this service, including examples and usage guidelines. The API documentation provides a user-friendly interface for understanding how to use the Screenshot API effectively.
-
-### API Endpoint
-Make a GET request to `/screenshot` endpoint with the following parameters:
-
-- `url` (required): The URL of the website to screenshot.
-- `viewport` (optional, default '1440x900'): The viewport size.
-- `format` (optional, default 'PNG'): The screenshot format, supports PNG, JPG.
-- `delay` (optional, default '0'): The delay before the screenshot is taken to allow the page to load.
-
-### Examples
-Request to capture a screenshot:
-
-```http
-GET https://example.com/screenshot?url=https://example.com&viewport=1024x768&format=jpg&delay=1
-```
-
-With cURL on command line:
-
-```bash
-curl -H "Authorization: Bearer YOUR_API_AUTHENTICATION_TOKEN" \ 
-"https://example.com/screenshot?url=https%3A%2F%2Fexample.com&viewport=1024x768&format=jpg&delay=1" \
---output screenshot.jpg
-```
-
-## 🐳 Running with Docker
-To build and run the application locally using Docker for testing:
-
-```bash
-docker buildx build --platform linux/amd64 -t selenium-screenshots .
-docker run --platform linux/amd64 -p 5000:8080 \
--e ALLOWED_ORIGINS="*" \
---name screenshot-service \
-selenium-screenshots
-```
-
-Or pull the pre-built Docker image from GHCR.io on a server for production:
-```bash
-docker pull ghcr.io/rahb-realtors-association/selenium-screenshots:latest
-docker run -d -p 8080:8080 \
--e BEARER_TOKEN="your_api_authentication_token" \
--e ALLOWED_ORIGINS="https://example.com" \
---name screenshot-service \
-ghcr.io/rahb-realtors-association/selenium-screenshots:latest
-```
-
-## 🌐 Community
-
-### Contributing 👥
-
-Contributions, bug reports, and feature requests are welcome! Please refer to the contributing guidelines and the code of conduct.
-
-[![Submit a PR](https://img.shields.io/badge/Submit_a_PR-GitHub-%23060606?style=for-the-badge&logo=github&logoColor=fff)](https://github.com/RAHB-REALTORS-Association/selenium-screenshots/compare)
-
-### Reporting Bugs 🐛
-
-Encountered a bug? Open an issue with details about the bug and how it can be reproduced.
-
-[![Raise an Issue](https://img.shields.io/badge/Raise_an_Issue-GitHub-%23060606?style=for-the-badge&logo=github&logoColor=fff)](https://github.com/RAHB-REALTORS-Association/selenium-screenshots/issues/new/choose)
-
-## 📄 License
-This project is open source under the MIT license. See the [LICENSE](LICENSE) file for more info. 📜
+The browser smoke uses an embedded fixture, so it does not require an outbound proxy or contact a target website. It verifies PNG/JPEG signatures, an exact 800×600 viewport, and an 800×1800 full-page capture; images are saved under `test-results/`. Serving real HTTP(S) captures still requires the configured filtering proxy.
