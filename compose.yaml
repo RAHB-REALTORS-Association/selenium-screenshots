@@ -1,6 +1,6 @@
 services:
   gateway:
-    image: ${GATEWAY_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:gateway-v1.6.1}
+    image: ${GATEWAY_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:gateway-v1.7.0}
     restart: unless-stopped
     init: true
     read_only: true
@@ -26,7 +26,7 @@ services:
     cpus: 0.5
     pids_limit: 64
   api:
-    image: ${API_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:v1.6.1}
+    image: ${API_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:v1.7.0}
     restart: unless-stopped
     init: true
     # Coolify preserves explicit network_mode, unlike ordinary custom network lists.
@@ -63,7 +63,7 @@ services:
     pids_limit: 512
     stop_grace_period: 65s
   proxy:
-    image: ${PROXY_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:proxy-v1.6.1}
+    image: ${PROXY_IMAGE:-ghcr.io/rahb-realtors-association/selenium-screenshots:proxy-v1.7.0}
     restart: unless-stopped
     init: true
     cap_drop: [ALL]

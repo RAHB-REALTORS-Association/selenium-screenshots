@@ -37,6 +37,23 @@ class ApiTests(unittest.TestCase):
                     self.assertEqual(response.data, b'image')
             self.assertEqual(capture.call_count, 4)
 
+    def test_fullpage_option_reaches_capture_on_both_routes(self):
+        headers = {'Authorization': 'Bearer test-token'}
+        with patch('capture_runner.run_capture', return_value=b'image') as capture:
+            for route in ('/screenshot', '/api/capture'):
+                for enabled in (0, 1):
+                    response = self.client.get(route, query_string={
+                        'url': 'https://example.com', 'viewport': '800x600', 'fullpage': enabled,
+                    }, headers=headers)
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(capture.call_args.args[1:3], (800, 600))
+                    self.assertIs(capture.call_args.args[5], bool(enabled))
+
+    def test_query_credentials_do_not_authenticate(self):
+        self.assertEqual(self.client.get('/screenshot', query_string={
+            'url': 'https://example.com', 'secret_key': 'test-token',
+        }).status_code, 401)
+
     def test_private_targets_are_explicit_and_still_exclude_metadata(self):
         headers = {'Authorization': 'Bearer test-token'}
         with patch.dict(os.environ, {'ALLOW_PRIVATE_TARGETS': 'true'}), patch('capture_runner.run_capture', return_value=b'image'):
