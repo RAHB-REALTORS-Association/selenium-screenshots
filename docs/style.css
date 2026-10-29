@@ -362,7 +362,7 @@ select {
   font-size: 14px;
 }
 input::placeholder {
-  color: #8a94a5;
+  color: var(--muted);
 }
 input:hover,
 select:hover {
@@ -547,7 +547,7 @@ input[type="range"] {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #8a94a5;
+  color: var(--muted);
 }
 .capture-action {
   border-top: 1px solid #edf0f4;
@@ -603,7 +603,7 @@ input[type="range"] {
 .capture-action p {
   font-size: 11px;
   text-align: center;
-  color: #8a94a5;
+  color: var(--muted);
   margin: 12px 0 0;
 }
 .preview-header {
@@ -704,7 +704,7 @@ input[type="range"] {
   border: 1px solid #e5eaf1;
   padding: 6px 9px;
   border-radius: 5px;
-  color: #75839a;
+  color: var(--muted);
 }
 .preview-footer {
   padding: 17px 24px;
@@ -718,7 +718,7 @@ input[type="range"] {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #8a94a5;
+  color: var(--muted);
   font-size: 12px;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -756,7 +756,7 @@ input[type="range"] {
   justify-content: center;
   gap: 7px;
   font-size: 11px;
-  color: #8a94a5;
+  color: var(--muted);
   margin-top: 24px;
   line-height: 1.6;
 }
