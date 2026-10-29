@@ -24,7 +24,7 @@ Authorization: Bearer <token>
 
 ## Run and test
 
-Install `requirements.txt` in a virtual environment, configure both required variables and run `gunicorn --config gunicorn_config.py app:app`. Run `python -m unittest discover -s tests -v` for the API contract tests. The Docker image listens on port 8080; configure its network and proxy before exposing it. Chrome sandbox support must be enabled in the container runtime.
+Use Python 3.15.2 (see `.python-version`) and install `requirements.txt` in a virtual environment, configure both required variables and run `gunicorn --config gunicorn_config.py app:app`. Run `python -m unittest discover -s tests -v` for the API contract tests. The Docker image listens on port 8080; configure its network and proxy before exposing it. Chrome sandbox support must be enabled in the container runtime.
 
 ### Local Chrome verification (macOS)
 
@@ -47,4 +47,17 @@ CI verifies decoded pixels from a generated HEVC fixture inside the actual serve
 
 ### Releases
 
-Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser, proxy-policy and full Compose stack checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.6.1`, `1.6.1`, `1.6` and `latest`; proxy tags include `proxy-v1.6.1` and `proxy-latest`; gateway tags include `gateway-v1.6.1` and `gateway-latest`. The Compose file pins matching versioned images. Release publication does not invoke the legacy deployment webhook.
+Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser, proxy-policy and full Compose stack checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.7.0`, `1.7.0`, `1.7` and `latest`; proxy tags include `proxy-v1.7.0` and `proxy-latest`; gateway tags include `gateway-v1.7.0` and `gateway-latest`. The Compose file pins matching versioned images. Release publication does not invoke the legacy deployment webhook.
+
+## Web client
+
+The GitHub Pages client is a dependency-free static application following the Cornerstone application blueprint: navy navigation, a responsive capture workspace, accessible connection dialog, and explicit empty, loading, error, and completed states. No frontend build step or third-party CDN assets are required.
+
+1. Open **API settings**, enter the API base URL and bearer key, and save. Settings use session storage by default; **Remember settings on this device** uses local storage. Existing saved settings from earlier releases are preserved. Only remember credentials on a trusted device.
+2. Enter a complete HTTP(S) website URL. Choose a viewport preset or custom dimensions, PNG/JPG, and an optional additional delay.
+3. Enable **Full page** to capture beyond the viewport. Server limits still apply: 16 million pixels and 10,000 pixels per dimension.
+4. Capture, inspect the preview and its dimensions, then download. Changing options after a capture does not change that image's download format. A failed retry preserves the last successful preview.
+
+Keys are sent only in the Authorization header, never in request URLs. Screenshots are held as browser object URLs, rather than saved in application history or uploaded to storage. Closing or reloading the page clears the preview. API settings and capture inputs are separate: cancelling the settings dialog does not change the connection.
+
+For local UI work, serve `docs/` with a static server and use an API whose `ALLOWED_ORIGINS` includes that local origin. Run `node --test tests/test_client.cjs` for request, validation, settings migration, download, error and cache tests. Test the actual browser at desktop and phone widths as well.

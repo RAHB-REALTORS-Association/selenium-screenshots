@@ -1,83 +1,90 @@
----
 openapi: 3.0.0
 info:
   title: Screenshot API
-  version: 1.0.0
-  description: |-
-    This project provides a simple API service that uses Selenium and Google Chrome to take screenshots of websites. It's powered by Flask and can be containerized using Docker for ease of deployment.
-
-    For more information and source code, please visit the GitHub repository: [Selenium Screenshots](https://github.com/RAHB-REALTORS-Association/selenium-screenshots).
+  version: 1.7.0
+  description: >-
+    Capture public HTTP(S) websites with a sandboxed Chromium browser.
+    Two captures can run concurrently; additional requests receive 503 with Retry-After.
+    Authentication uses an Authorization bearer header, never query credentials.
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  contact:
-    name: RAHB Lab
-    url: https://lab.rahb.ca/
 servers:
-- url: https://screenshot-api.oncornerstone.app
-  description: Production server
-- url: http://screenshot-api.app.rahb.local
-  description: Staging server
-- url: http://127.0.0.1:5000
-  description: Development server
+  - url: https://screenshot-api.oncornerstone.app
+    description: Production server
+  - url: http://127.0.0.1:8080
+    description: Local configured API
 paths:
-  "/screenshot":
-    get:
-      summary: Take a screenshot of a website.
-      description: Make a GET request to `/screenshot` endpoint with the required
-        `url` parameter and optional `viewport`, `format`, and `delay` parameters
-        to capture a screenshot. Requires API authentication using a bearer token.
+  /screenshot:
+    get: &capture
+      summary: Capture a website
+      description: >-
+        Returns image bytes. Public destinations only by default. Operators may enable
+        RFC1918 IPv4 targets on both API and proxy; loopback and metadata remain denied.
+        Full-page captures are limited to 16 million pixels and 10,000 pixels per dimension.
       parameters:
-      - name: url
-        in: query
-        required: true
-        description: The URL of the website to screenshot.
-        schema:
-          type: string
-      - name: viewport
-        in: query
-        description: The viewport size. Default is '1440x900'. Useful for capturing
-          screenshots of specific sizes.
-        schema:
-          type: string
-      - name: format
-        in: query
-        description: The screenshot format. Supports PNG, JPG. Default is 'PNG'. Choose
-          between the two image formats for different use cases.
-        schema:
-          type: string
-      - name: delay
-        in: query
-        description: Delay in seconds before capture, from 0 to 10. Defaults to 0.
-        schema:
-          type: integer
-      - name: fullpage
-        in: query
-        description: Set to 1 for a full-page capture, limited to 16 million pixels and 10000 pixels per dimension.
-        schema:
-          type: integer
-          enum: [0, 1]
-          default: 0
+        - name: url
+          in: query
+          required: true
+          description: Complete HTTP(S) URL without embedded credentials.
+          schema:
+            type: string
+            format: uri
+        - name: viewport
+          in: query
+          description: Width x height in pixels, each 1–9999 and at most 16 million pixels total.
+          schema:
+            type: string
+            pattern: "^[0-9]{1,4}x[0-9]{1,4}$"
+            default: 1440x900
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [PNG, JPG]
+            default: PNG
+        - name: delay
+          in: query
+          description: Additional delay before rendering settles, in seconds.
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 10
+            default: 0
+        - name: fullpage
+          in: query
+          description: Set to 1 to capture beyond the viewport.
+          schema:
+            type: integer
+            enum: [0, 1]
+            default: 0
       responses:
-        '200':
-          description: Screenshot successfully taken. Returns the captured image in
-            either PNG or JPG format.
+        "200":
+          description: Captured image. Responses are not cacheable.
           content:
             image/png: {}
             image/jpeg: {}
-        '401':
-          description: Unauthorized. The API authentication token is missing or invalid.
-        '400':
-          description: Invalid capture parameters.
-        '503':
-          description: Service configuration is invalid.
-        '502':
-          description: Internal Server Error. An error occurred while taking the screenshot.
+        "400":
+          description: Invalid URL, capture parameters, or full-page dimensions.
+        "401":
+          description: Missing or invalid bearer token.
+        "502":
+          description: The browser could not render or capture the page, including capture deadline failures.
+        "503":
+          description: Invalid service configuration or both capture workers are busy.
+          headers:
+            Retry-After:
+              description: Retry delay in seconds when capture workers are busy.
+              schema:
+                type: integer
+                example: 5
+  /api/capture:
+    get: *capture
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      description: 'Enter your API authentication token in this format: Bearer <your_api_authentication_token>'
+      description: Enter the API token. The client sends it in the Authorization header.
 security:
-- bearerAuth: []
+  - bearerAuth: []

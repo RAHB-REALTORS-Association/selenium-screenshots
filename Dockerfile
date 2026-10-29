@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm AS driver
+FROM python:3.15.2-slim-bookworm@sha256:4e03260adeeebafccd084f3584e6b84823aba5651cfb53ef8a078ed441ddf9cd AS driver
 ARG CHROMEDRIVER_VERSION=156.0.8078.74
 ARG CHROMEDRIVER_SHA256=308f87940ec84d9adfd6079a71ddfc864fbeab102125d6726f6ae5da4fbfaf45
 RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-certificates \
@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-c
     && echo "${CHROMEDRIVER_SHA256}  /tmp/driver.zip" | sha256sum -c - \
     && unzip -q /tmp/driver.zip -d /driver
 
-FROM python:3.11-slim-bookworm
+FROM python:3.15.2-slim-bookworm@sha256:4e03260adeeebafccd084f3584e6b84823aba5651cfb53ef8a078ed441ddf9cd
 ARG TARGETARCH
 ARG BRAVE_VERSION=1.98.62
 # This Chromium-based runtime includes an opt-in software HEVC decoder on Linux.
