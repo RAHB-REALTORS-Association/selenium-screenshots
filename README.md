@@ -24,7 +24,7 @@ Authorization: Bearer <token>
 
 ## Run and test
 
-Install `requirements.txt` in a virtual environment, configure both required variables and run `gunicorn --config gunicorn_config.py app:app`. Run `python -m unittest discover -s tests -v` for the API contract tests. The Docker image listens on port 8080; configure its network and proxy before exposing it. Chrome sandbox support must be enabled in the container runtime.
+Use Python 3.15.2 (see `.python-version`) and install `requirements.txt` in a virtual environment, configure both required variables and run `gunicorn --config gunicorn_config.py app:app`. Run `python -m unittest discover -s tests -v` for the API contract tests. The Docker image listens on port 8080; configure its network and proxy before exposing it. Chrome sandbox support must be enabled in the container runtime.
 
 ### Local Chrome verification (macOS)
 
