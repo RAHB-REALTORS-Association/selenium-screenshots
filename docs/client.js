@@ -1,4 +1,4 @@
-// Axios returns error bodies as Blobs when responseType is "blob".
+// Image requests can return JSON error bodies; decode them before displaying.
 async function screenshotErrorMessage(error) {
   if (!error.response) {
     return "Unable to reach the API. Check the API URL, network, and CORS settings.";

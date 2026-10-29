@@ -72,7 +72,8 @@
     <aside class="sidebar" id="sidebar" aria-label="Application navigation">
       <a class="brand" href="./"
         ><span class="brand-mark"
-          ><svg><use href="#camera" /></svg></span
+          ><svg aria-hidden="true" focusable="false">
+            <use href="#camera" /></svg></span
         ><span>Selenium<span class="brand-subtitle">Screenshots</span></span></a
       >
       <button
@@ -80,20 +81,22 @@
         id="closeNavigation"
         aria-label="Close navigation"
       >
-        <svg><use href="#close" /></svg>
+        <svg aria-hidden="true" focusable="false"><use href="#close" /></svg>
       </button>
       <p class="nav-label">WORKSPACE</p>
       <nav>
         <a class="nav-item active" href="#main" aria-current="page"
-          ><svg><use href="#camera" /></svg>Capture</a
+          ><svg aria-hidden="true" focusable="false"><use href="#camera" /></svg
+          >Capture</a
         >
         <button class="nav-item" data-settings>
-          <svg><use href="#settings" /></svg>API settings
+          <svg aria-hidden="true" focusable="false">
+            <use href="#settings" /></svg
+          >API settings
         </button>
         <a class="nav-item" href="api/"
-          ><svg><use href="#book" /></svg>API documentation<svg
-            class="nav-arrow"
-          >
+          ><svg aria-hidden="true" focusable="false"><use href="#book" /></svg
+          >API documentation<svg class="nav-arrow">
             <use href="#arrow" /></svg
         ></a>
       </nav>
@@ -103,7 +106,8 @@
           href="https://github.com/RAHB-REALTORS-Association/selenium-screenshots"
           target="_blank"
           rel="noopener noreferrer"
-          ><svg><use href="#code" /></svg>View on GitHub<svg class="nav-arrow">
+          ><svg aria-hidden="true" focusable="false"><use href="#code" /></svg
+          >View on GitHub<svg class="nav-arrow">
             <use href="#arrow" /></svg
         ></a>
         <div class="version">
@@ -122,14 +126,18 @@
             aria-controls="sidebar"
             aria-expanded="false"
           >
-            <svg><use href="#menu" /></svg></button
+            <svg aria-hidden="true" focusable="false">
+              <use href="#menu" />
+            </svg></button
           ><span>Workspace</span><span class="crumb-divider">/</span
           ><strong>Capture</strong>
         </div>
         <button class="connection-button" data-settings>
           <span class="status-dot" id="connectionDot"></span
           ><span id="connectionStatus">Set up API</span
-          ><svg><use href="#settings" /></svg>
+          ><svg aria-hidden="true" focusable="false">
+            <use href="#settings" />
+          </svg>
         </button>
       </header>
       <main id="main" tabindex="-1">
@@ -143,14 +151,18 @@
             </p>
           </div>
           <span class="page-badge"
-            ><svg><use href="#camera" /></svg>Screenshot workspace</span
+            ><svg aria-hidden="true" focusable="false">
+              <use href="#camera" /></svg
+            >Screenshot workspace</span
           >
         </div>
         <div class="workspace-grid">
           <section class="card capture-card" aria-labelledby="captureHeading">
             <div class="card-heading">
               <div class="section-icon">
-                <svg><use href="#globe" /></svg>
+                <svg aria-hidden="true" focusable="false">
+                  <use href="#globe" />
+                </svg>
               </div>
               <div>
                 <h2 id="captureHeading">New capture</h2>
@@ -258,7 +270,8 @@
               </div>
               <div class="capture-action">
                 <button id="submitButton" class="button primary" type="submit">
-                  <svg><use href="#camera" /></svg
+                  <svg aria-hidden="true" focusable="false">
+                    <use href="#camera" /></svg
                   ><span id="submitLabel">Capture screenshot</span
                   ><span class="spinner" id="screenshotSpinner" hidden></span>
                 </button>
@@ -290,7 +303,8 @@
             <div class="preview-stage" id="previewStage">
               <div class="empty-state" id="emptyState">
                 <div class="empty-art">
-                  <svg><use href="#image" /></svg
+                  <svg aria-hidden="true" focusable="false">
+                    <use href="#image" /></svg
                   ><span class="art-corner top-left"></span
                   ><span class="art-corner bottom-right"></span>
                 </div>
@@ -326,17 +340,22 @@
             </div>
             <div class="preview-footer">
               <div id="resultDetails">
-                <svg><use href="#image" /></svg><span>No capture yet</span>
+                <svg aria-hidden="true" focusable="false">
+                  <use href="#image" /></svg
+                ><span>No capture yet</span>
               </div>
               <a id="saveButton" class="button secondary" aria-disabled="true"
-                ><svg><use href="#download" /></svg>Download</a
+                ><svg aria-hidden="true" focusable="false">
+                  <use href="#download" /></svg
+                >Download</a
               >
             </div>
           </section>
         </div>
         <p class="workspace-note">
-          <svg><use href="#check" /></svg> Your screenshots stay in your
-          browser. Download the ones you want to keep.
+          <svg aria-hidden="true" focusable="false"><use href="#check" /></svg>
+          Your screenshots stay in your browser. Download the ones you want to
+          keep.
         </p>
         <p
           class="sr-only"
@@ -359,7 +378,9 @@
             id="closeSettings"
             aria-label="Close API settings"
           >
-            <svg><use href="#close" /></svg>
+            <svg aria-hidden="true" focusable="false">
+              <use href="#close" />
+            </svg>
           </button>
         </div>
         <p class="dialog-description">
