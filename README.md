@@ -47,7 +47,7 @@ CI verifies decoded pixels from a generated HEVC fixture inside the actual serve
 
 ### Releases
 
-Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser, proxy-policy and full Compose stack checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.7.0`, `1.7.0`, `1.7` and `latest`; proxy tags include `proxy-v1.7.0` and `proxy-latest`; gateway tags include `gateway-v1.7.0` and `gateway-latest`. The Compose file pins matching versioned images. Release publication does not invoke the legacy deployment webhook.
+Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser, proxy-policy and full Compose stack checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.7.1`, `1.7.1`, `1.7` and `latest`; proxy tags include `proxy-v1.7.1` and `proxy-latest`; gateway tags include `gateway-v1.7.1` and `gateway-latest`. The Compose file pins matching versioned images. Dependency PRs use the same tag-driven release process; merging a dependency update does not create a release automatically. Publish GitHub release notes after the image workflow succeeds. Release publication does not invoke the legacy deployment webhook.
 
 ## Web client
 

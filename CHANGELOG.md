@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.1
+
+- Upgrade Selenium from 4.51.0 to 4.52.0 (#108).
+- Pin matching API, proxy and gateway Compose images to v1.7.1; update the client version, asset cache and API reference.
+- Remove the obsolete Dependabot auto-release workflow. Releases use the tag-driven Docker pipeline so browser, proxy and full-stack checks finish before image publication.
+- No configuration or data migrations are required.
+
 ## 1.7.0
 
 - Replace the Bootstrap client with a responsive Cornerstone capture workspace, native accessible settings dialog, consistent SVG icons, and locally served assets. Remove Bootstrap, Font Awesome and Axios CDN dependencies.

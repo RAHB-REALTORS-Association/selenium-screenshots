@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Screenshot API
-  version: 1.7.0
+  version: 1.7.1
   description: >-
     Capture public HTTP(S) websites with a sandboxed Chromium browser.
     Two captures can run concurrently; additional requests receive 503 with Retry-After.
