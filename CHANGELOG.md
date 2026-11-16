@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.2
+
+- Upgrade Gunicorn from 26.2.0 to 27.0.1 (#109), retaining the gthread worker configuration and shared two-capture limit.
+- Pin matching API, proxy and gateway Compose images to v1.7.2; refresh the client version, asset cache and API reference.
+- Gunicorn 27 rejects malformed HTTP request framing more strictly. No application configuration or data migration is required.
+
 ## 1.7.1
 
 - Upgrade Selenium from 4.51.0 to 4.52.0 (#108).
