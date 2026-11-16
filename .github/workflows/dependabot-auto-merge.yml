@@ -1,0 +1,41 @@
+name: Dependabot Auto-merge
+
+on:
+  workflow_run:
+    workflows: ["Continuous Integration", "Preview Image", "CodeQL"]
+    types: [completed]
+  check_suite:
+    types: [completed]
+  status:
+  # Reconcile late-arriving checks and transient mergeability results.
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+  checks: read
+  statuses: read
+
+concurrency:
+  group: dependabot-auto-merge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # This privileged job only executes trusted default-branch code.
+      # It never checks out, installs, or runs code from a pull request.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const {run} = require('./.github/scripts/dependabot-auto-merge.cjs');
+            await run({github, context, core});
