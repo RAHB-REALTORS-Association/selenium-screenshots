@@ -3,6 +3,7 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -12,10 +13,28 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.15.2'
+          python-version: "3.15.2"
           cache: pip
       - run: python -m pip install -r requirements.txt
       - run: python -m unittest discover -s tests -v
       - run: python tests/capacity_smoke.py
-      - run: node --test tests/test_client.cjs
-      - run: docker build -t screenshot-api:test .
+      - run: node --test tests/test_client.cjs tests/test_dependabot_auto_merge.cjs
+      - run: docker build -t screenshot-api:ci .
+      - name: Verify sandboxed browser rendering
+        run: |
+          mkdir -p test-results
+          chmod 777 test-results
+          docker run --rm --network none \
+            --security-opt seccomp=deploy/chromium-seccomp.json \
+            -e PYTHONPATH=/app \
+            -v "$PWD/tests:/app/tests:ro" \
+            -v "$PWD/test-results:/app/test-results" \
+            --entrypoint python screenshot-api:ci tests/browser_smoke.py
+      - name: Verify proxy destination policy
+        run: |
+          docker build -f deploy/Proxy.Dockerfile -t screenshot-proxy:ci .
+          sh tests/proxy_smoke.sh
+      - name: Verify the full Compose capture stack
+        run: |
+          docker build -f deploy/Gateway.Dockerfile -t screenshot-gateway:ci .
+          python tests/stack_smoke.py

@@ -61,3 +61,13 @@ The GitHub Pages client is a dependency-free static application following the Co
 Keys are sent only in the Authorization header, never in request URLs. Screenshots are held as browser object URLs, rather than saved in application history or uploaded to storage. Closing or reloading the page clears the preview. API settings and capture inputs are separate: cancelling the settings dialog does not change the connection.
 
 For local UI work, serve `docs/` with a static server and use an API whose `ALLOWED_ORIGINS` includes that local origin. Run `node --test tests/test_client.cjs` for request, validation, settings migration, download, error and cache tests. Test the actual browser at desktop and phone widths as well.
+
+### Dependabot auto-merge
+
+GitHub Actions squash-merges genuine Dependabot PRs after CI passes. This applies to all configured pip version updates, including major versions, when the only change is to existing pins in `requirements.txt`. Human PRs, fork PRs, added dependencies, and changes to application or workflow files stay manual.
+
+The merge job checks the current PR commit's CI workflow, all latest check runs, and external commit statuses. Pending, failing, cancelled, or timed-out checks block merging. The required CI test includes sandboxed browser rendering, proxy policy, and the full Compose capture stack. GitHub branch protection and required reviews still apply; conflicts and outdated branches wait for a Dependabot rebase or maintainer attention.
+
+Checks completing trigger evaluation immediately. A half-hourly reconciliation handles late checks and transient GitHub mergeability results; **Dependabot Auto-merge → Run workflow** can also retry manually. Each run records its decision in the Actions job summary. The privileged job only executes trusted default-branch code and never installs or executes PR code.
+
+**Releases and Coolify deployment remain manual.** Auto-merge does not bump the application version, create a tag/release, or deploy. Merges made with `GITHUB_TOKEN` do not trigger ordinary push workflows; the patch release's tag-driven image pipeline remains the validation and publication path when a release is requested.
