@@ -1,12 +1,12 @@
 // service-worker.js
 
-const CACHE_NAME = "selenium-screenshots-v6";
+const CACHE_NAME = "selenium-screenshots-v7";
 const urlsToCache = [
   "./",
-  "style.css?v=1.7.1",
-  "client.js?v=1.7.1",
+  "style.css?v=1.7.2",
+  "client.js?v=1.7.2",
   "mark.svg",
-  "manifest.json?v=1.7.1",
+  "manifest.json?v=1.7.2",
 ];
 
 self.addEventListener("install", function (event) {
