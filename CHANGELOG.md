@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.3
+
+- Upgrade Selenium from 4.52.0 to 4.53.0 (#111).
+- Include the Dependabot auto-merge workflow and expanded required CI checks introduced in #110. Releases and Coolify deployment remain manual.
+- Pin matching API, proxy and gateway Compose images to v1.7.3; refresh the client version, asset cache and API reference.
+- No configuration or data migrations are required.
+
 ## 1.7.2
 
 - Upgrade Gunicorn from 26.2.0 to 27.0.1 (#109), retaining the gthread worker configuration and shared two-capture limit.
