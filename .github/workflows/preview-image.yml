@@ -59,6 +59,7 @@ jobs:
       - name: Build gateway and verify the Compose stack
         run: |
           docker build -f deploy/Gateway.Dockerfile -t screenshot-gateway:ci .
+          sh tests/gateway_security.sh
           python tests/stack_smoke.py
       - uses: docker/build-push-action@v6
         with:

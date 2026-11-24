@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.4
+
+- Move the gateway to the maintained `nginx/nginx-unprivileged` image, pinned to NGINX 1.30.8 and its image digest. Update Brotli to 1.2.1-r0, libxslt to 1.1.43-r4 and curl/libcurl to 8.23.0-r0, addressing the gateway findings reported by Coolify.
+- Scan the built gateway image in PR, preview and release CI; block on fixable high or critical vulnerabilities before publishing.
+- Pin matching API, proxy and gateway Compose images to v1.7.4; refresh the client version, asset cache and API reference.
+- No configuration or data migrations are required. Deployments remain manual.
+
 ## 1.7.3
 
 - Upgrade Selenium from 4.52.0 to 4.53.0 (#111).
