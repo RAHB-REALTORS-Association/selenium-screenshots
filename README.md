@@ -47,7 +47,9 @@ CI verifies decoded pixels from a generated HEVC fixture inside the actual serve
 
 ### Releases
 
-Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser, proxy-policy and full Compose stack checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.7.3`, `1.7.3`, `1.7` and `latest`; proxy tags include `proxy-v1.7.3` and `proxy-latest`; gateway tags include `gateway-v1.7.3` and `gateway-latest`. The Compose file pins matching versioned images. Dependency PRs use the same tag-driven release process; merging a dependency update does not create a release automatically. Publish GitHub release notes after the image workflow succeeds. Release publication does not invoke the legacy deployment webhook.
+Push a `v`-prefixed semantic version tag on merged `master`. The release workflow runs unit, overload, client, sandboxed browser, proxy-policy, gateway vulnerability and full Compose stack checks, then publishes the exact tested amd64 images to GHCR. API tags include `v1.7.4`, `1.7.4`, `1.7` and `latest`; proxy tags include `proxy-v1.7.4` and `proxy-latest`; gateway tags include `gateway-v1.7.4` and `gateway-latest`. The Compose file pins matching versioned images. Dependency PRs use the same tag-driven release process; merging a dependency update does not create a release automatically. Publish GitHub release notes after the image workflow succeeds. Release publication does not invoke the legacy deployment webhook.
+
+The gateway uses the maintained `nginx/nginx-unprivileged` registry and a pinned image digest. PR, preview and release CI scan the built gateway with Trivy and fail on fixable high or critical vulnerabilities. Reproduce the scan after building `screenshot-gateway:ci` with `sh tests/gateway_security.sh`. Updating Python requirements alone does not update container OS packages; refresh the gateway base image and publish a new patch release when fixes are available.
 
 ## Web client
 
